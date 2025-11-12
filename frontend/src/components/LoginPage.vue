@@ -57,6 +57,11 @@ export default {
 
       this.remove_error();
 
+      if (!this.name_account || !this.password) {
+        this.error = "Vui lòng nhập tên tài khoản và mật khẩu";
+        return false;
+      }
+
       if (
         this.name_account.length < 5 ||
         this.name_account.length > 50 ||
@@ -69,8 +74,10 @@ export default {
         return false;
       }
 
+      const baseUrl = process.env.VUE_APP_URL || '';
+
       Vue.axios
-        .post(`${process.env.VUE_APP_URL}/user-login`, {
+        .post(`${baseUrl}/user-login`, {
           name_account: this.name_account,
           password: this.password,
         })
@@ -80,7 +87,27 @@ export default {
         })
         .catch((errors) => {
           if (errors.response) {
-            _this.error = errors.response.data;
+            const data = errors.response.data;
+            let message = "Lỗi đăng nhập";
+
+            if (typeof data === "string") {
+              message = data;
+            } else if (Array.isArray(data) && data.length > 0) {
+              const first = data[0];
+              message = first.msg || first.message || JSON.stringify(first);
+            } else if (data && data.message) {
+              message = data.message;
+            } else {
+              try {
+                message = JSON.stringify(data);
+              } catch (e) {
+                message = "Lỗi không xác định";
+              }
+            }
+
+            _this.error = message;
+          } else {
+            _this.error = "Không thể kết nối đến máy chủ";
           }
         });
     },

@@ -91,29 +91,60 @@ export default {
 
       this.remove_error();
 
+      // Validate required fields
+      if (!name_account || !phone_number || !password || !re_password) {
+        if (!name_account) this.set_error("name_account", "Vui lòng nhập tên tài khoản");
+        if (!phone_number) this.set_error("phone_number", "Vui lòng nhập số điện thoại");
+        if (!password) this.set_error("password", "Vui lòng nhập mật khẩu");
+        if (!re_password) this.set_error("re_password", "Vui lòng nhập lại mật khẩu");
+        return;
+      }
+
       if (password !== re_password) {
         this.set_error("re_password", "Nhập lại mật khẩu không chính xác");
         return;
       }
 
+      const baseUrl = process.env.VUE_APP_URL || '';
+
       Vue.axios
-        .post(`${process.env.VUE_APP_URL}/user-register`, {
+        .post(`${baseUrl}/user-register`, {
           name_account: name_account,
           phone_number: phone_number,
           password: password,
         })
         .then((res) => {
           _this.remove_error();
-          confirm(res.data);
-          this.$router.push("/login");
+          // show success message and redirect to login
+          alert(res.data);
+          this.$router.push({ name: "Login" });
         })
         .catch(function (errors) {
           if (errors.response) {
-            console.log(errors.response.data);
-            _this.set_error(
-              errors.response.data[0].param,
-              errors.response.data[0].msg
-            );
+            const data = errors.response.data;
+
+            // If backend returned array of validation messages
+            if (Array.isArray(data) && data.length > 0) {
+              data.forEach((item) => {
+                if (item && item.param) _this.set_error(item.param, item.msg || item.msg);
+              });
+            } else if (typeof data === "string") {
+              // backend may return a simple string for duplicate error
+              // try to map known messages to fields
+              if (data.includes("tên tài khoản") || data.toLowerCase().includes("tên tài khoản")) {
+                _this.set_error("name_account", data);
+              } else if (data.toLowerCase().includes("số điện thoại") || data.toLowerCase().includes("điện thoại")) {
+                _this.set_error("phone_number", data);
+              } else {
+                alert(data);
+              }
+            } else if (data && data.message) {
+              alert(data.message);
+            } else {
+              alert("Đăng ký thất bại");
+            }
+          } else {
+            alert("Không thể kết nối đến máy chủ");
           }
         });
     },
