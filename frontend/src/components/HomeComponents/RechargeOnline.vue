@@ -48,7 +48,7 @@
         <div class="rank">
           <div class="rank-left">
             <i class="fa fa-star" aria-hidden="true"></i>
-            <strong>tranthibaonhi</strong>
+            <strong>crabbercac</strong>
           </div>
           <div class="rank-right">
             <strong>50,000 <span>VND</span></strong>
@@ -57,7 +57,7 @@
         <div class="rank">
           <div class="rank-left">
             <div class="num-rank"><strong>2</strong></div>
-            <strong>tranthibaonhi</strong>
+            <strong>crabbercac</strong>
           </div>
           <div class="rank-right">
             <strong>50,000 <span>VND</span></strong>
@@ -66,7 +66,7 @@
         <div class="rank">
           <div class="rank-left">
             <div class="num-rank"><strong>3</strong></div>
-            <strong>tranthibaonhi</strong>
+            <strong>crabbercac</strong>
           </div>
           <div class="rank-right">
             <strong>50,000 <span>VND</span></strong>
@@ -75,7 +75,7 @@
         <div class="rank">
           <div class="rank-left">
             <div class="num-rank"><strong>4</strong></div>
-            <strong>tranthibaonhi</strong>
+            <strong>crabbercac</strong>
           </div>
           <div class="rank-right">
             <strong>50,000 <span>VND</span></strong>
@@ -84,7 +84,7 @@
         <div class="rank">
           <div class="rank-left">
             <div class="num-rank"><strong>5</strong></div>
-            <strong>tranthibaonhi</strong>
+            <strong>crabbercac</strong>
           </div>
           <div class="rank-right">
             <strong>50,000 <span>VND</span></strong>

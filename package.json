@@ -1,0 +1,10 @@
+{
+  "name": "shop-acc-game",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install-be": "npm --prefix backend install",
+    "install-fe": "npm --prefix frontend install",
+    "install-all": "npm run install-be && npm run install-fe"
+  }
+}
