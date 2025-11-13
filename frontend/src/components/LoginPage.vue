@@ -53,6 +53,7 @@ export default {
   methods: {
     user_login() {
       let _this = this;
+      // username must be alphanumeric between 5 and 50 chars
       let re = /^[a-zA-Z0-9]+$/i;
 
       this.remove_error();
@@ -62,15 +63,20 @@ export default {
         return false;
       }
 
+      // Keep username checks, but allow passwords to contain special characters
+      // and require at least 8 characters (same as registration policy)
       if (
         this.name_account.length < 5 ||
         this.name_account.length > 50 ||
         !re.test(this.name_account) ||
-        this.password.length < 5 ||
-        this.password.length > 50 ||
-        !re.test(this.password)
+        this.password.length < 8 ||
+        this.password.length > 50
       ) {
-        this.error = "Tài khoản hoặc mật khẩu không chính xác!";
+        const msg =
+          (typeof vi !== "undefined" && vi.login_invalid) ||
+          (this.$t ? this.$t("login_invalid") : null) ||
+          "Tên tài khoản hoặc mật khẩu không hợp lệ";
+        this.error = msg;
         return false;
       }
 
