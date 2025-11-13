@@ -17,6 +17,11 @@ function init_routes(app) {
     auth_controllers.user_login
   );
 
+  router.post(
+    "/user-update",
+    auth_controllers.user_update_profile
+  );
+
   router.get(
     "/get-home-page-user-data",
     home_controllers.get_home_page_user_data
