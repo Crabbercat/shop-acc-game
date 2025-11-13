@@ -1,9 +1,14 @@
 <template>
-  <h1>Card Loading Page</h1>
+  <!-- Render the full recharge UI (reuses the component shown on the home page) -->
+  <RechargeOnline />
 </template>
 
 <script>
-export default {};
+import RechargeOnline from "./HomeComponents/RechargeOnline";
+
+export default {
+  components: { RechargeOnline },
+};
 </script>
 
 <style></style>
