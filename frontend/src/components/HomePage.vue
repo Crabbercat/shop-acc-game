@@ -13,10 +13,10 @@
           <p><strong>***</strong></p>
           <p><strong>GIẢM GIÁ 50% CÁC VÒNG QUAY SIÊU HOT</strong></p>
           <p>
-            <strong>FANPAGE HỖ TRỢ &amp; TỔ CHỨC EVENT ( </strong
-            ><a href="https://www.facebook.com/profile1.account.tab.id100009/"
+            <strong>FANPAGE HỖ TRỢ &amp; TỔ CHỨC EVENT (</strong
+            ><a href="https://www.facebook.com/Loc.rblx/"
               ><strong>Ấn vào đây</strong></a
-            ><strong> )</strong>
+            ><strong>)</strong>
           </p>
         </div>
         <button @click="closeNoticeBox" class="btn-close">
