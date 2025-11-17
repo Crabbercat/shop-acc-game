@@ -103,7 +103,9 @@ export default {
     },
 
     is_login() {
-      return !!(this.$store.state.user_data && this.$store.state.user_data.id_account);
+      return !!(
+        this.$store.state.user_data && this.$store.state.user_data.id_account
+      );
     },
     displayName() {
       const ud = this.$store.state.user_data || {};
@@ -119,7 +121,7 @@ export default {
       const val = ud.balance ?? ud.wallet ?? ud.wallet_balance ?? 0;
       const n = Number(val) || 0;
       try {
-        return new Intl.NumberFormat('vi-VN').format(n);
+        return new Intl.NumberFormat("vi-VN").format(n);
       } catch (e) {
         return n.toString();
       }

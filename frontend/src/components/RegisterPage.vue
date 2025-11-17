@@ -93,10 +93,13 @@ export default {
 
       // Validate required fields
       if (!name_account || !phone_number || !password || !re_password) {
-        if (!name_account) this.set_error("name_account", "Vui lòng nhập tên tài khoản");
-        if (!phone_number) this.set_error("phone_number", "Vui lòng nhập số điện thoại");
+        if (!name_account)
+          this.set_error("name_account", "Vui lòng nhập tên tài khoản");
+        if (!phone_number)
+          this.set_error("phone_number", "Vui lòng nhập số điện thoại");
         if (!password) this.set_error("password", "Vui lòng nhập mật khẩu");
-        if (!re_password) this.set_error("re_password", "Vui lòng nhập lại mật khẩu");
+        if (!re_password)
+          this.set_error("re_password", "Vui lòng nhập lại mật khẩu");
         return;
       }
 
@@ -105,7 +108,7 @@ export default {
         return;
       }
 
-      const baseUrl = process.env.VUE_APP_URL || '';
+      const baseUrl = process.env.VUE_APP_URL || "";
 
       Vue.axios
         .post(`${baseUrl}/user-register`, {
@@ -126,14 +129,21 @@ export default {
             // If backend returned array of validation messages
             if (Array.isArray(data) && data.length > 0) {
               data.forEach((item) => {
-                if (item && item.param) _this.set_error(item.param, item.msg || item.msg);
+                if (item && item.param)
+                  _this.set_error(item.param, item.msg || item.msg);
               });
             } else if (typeof data === "string") {
               // backend may return a simple string for duplicate error
               // try to map known messages to fields
-              if (data.includes("tên tài khoản") || data.toLowerCase().includes("tên tài khoản")) {
+              if (
+                data.includes("tên tài khoản") ||
+                data.toLowerCase().includes("tên tài khoản")
+              ) {
                 _this.set_error("name_account", data);
-              } else if (data.toLowerCase().includes("số điện thoại") || data.toLowerCase().includes("điện thoại")) {
+              } else if (
+                data.toLowerCase().includes("số điện thoại") ||
+                data.toLowerCase().includes("điện thoại")
+              ) {
                 _this.set_error("phone_number", data);
               } else {
                 alert(data);

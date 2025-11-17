@@ -724,9 +724,23 @@ export default {
         border-color: rgba(52, 211, 153, 0.45);
       }
 
-      &.error {
-        color: #f87171;
-        border-color: rgba(248, 113, 113, 0.45);
+      button {
+        width: 100%;
+        font-size: 1.1rem;
+        background: linear-gradient(180deg, #ffe900, #f2ac00);
+        border-radius: 6px;
+        padding: 12px 16px;
+        cursor: pointer;
+        margin-top: 6px;
+        color: rgba(0, 0, 0, 0.85);
+        font-weight: 700; /* use a weight available in Roboto Condensed */
+        letter-spacing: 0.6px;
+        border: none;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+        font-family: inherit;
       }
     }
 

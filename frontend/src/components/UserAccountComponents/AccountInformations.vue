@@ -18,14 +18,31 @@
         <td>
           <div v-if="editingField !== 'username'">
             {{ user.username }}
-            <button class="edit-btn" @click="startEdit('username')" title="Sửa">✎</button>
+            <button
+              type="button"
+              class="edit-btn"
+              @click="startEdit('username')"
+              title="Sửa"
+            >
+              ✎
+            </button>
           </div>
 
           <div v-else>
             <input v-model="editValues.username" />
-            <button class="save-btn" @click="saveEdit('username')">Lưu</button>
-            <button class="cancel-btn" @click="cancelEdit">Hủy</button>
-            <div v-if="errors.username" class="error">{{ errors.username }}</div>
+            <button
+              type="button"
+              class="save-btn"
+              @click="saveEdit('username')"
+            >
+              Lưu
+            </button>
+            <button type="button" class="cancel-btn" @click="cancelEdit">
+              Hủy
+            </button>
+            <div v-if="errors.username" class="error">
+              {{ errors.username }}
+            </div>
           </div>
         </td>
       </tr>
@@ -35,14 +52,31 @@
         <td>
           <div v-if="editingField !== 'name_account'">
             {{ user.name_account }}
-            <button class="edit-btn" @click="startEdit('name_account')" title="Sửa">✎</button>
+            <button
+              type="button"
+              class="edit-btn"
+              @click="startEdit('name_account')"
+              title="Sửa"
+            >
+              ✎
+            </button>
           </div>
 
           <div v-else>
             <input v-model="editValues.name_account" />
-            <button class="save-btn" @click="saveEdit('name_account')">Lưu</button>
-            <button class="cancel-btn" @click="cancelEdit">Hủy</button>
-            <div v-if="errors.name_account" class="error">{{ errors.name_account }}</div>
+            <button
+              type="button"
+              class="save-btn"
+              @click="saveEdit('name_account')"
+            >
+              Lưu
+            </button>
+            <button type="button" class="cancel-btn" @click="cancelEdit">
+              Hủy
+            </button>
+            <div v-if="errors.name_account" class="error">
+              {{ errors.name_account }}
+            </div>
           </div>
         </td>
       </tr>
@@ -52,14 +86,31 @@
         <td>
           <div v-if="editingField !== 'phone_number'">
             {{ user.phone_number }}
-            <button class="edit-btn" @click="startEdit('phone_number')" title="Sửa">✎</button>
+            <button
+              type="button"
+              class="edit-btn"
+              @click="startEdit('phone_number')"
+              title="Sửa"
+            >
+              ✎
+            </button>
           </div>
 
           <div v-else>
             <input v-model="editValues.phone_number" />
-            <button class="save-btn" @click="saveEdit('phone_number')">Lưu</button>
-            <button class="cancel-btn" @click="cancelEdit">Hủy</button>
-            <div v-if="errors.phone_number" class="error">{{ errors.phone_number }}</div>
+            <button
+              type="button"
+              class="save-btn"
+              @click="saveEdit('phone_number')"
+            >
+              Lưu
+            </button>
+            <button type="button" class="cancel-btn" @click="cancelEdit">
+              Hủy
+            </button>
+            <div v-if="errors.phone_number" class="error">
+              {{ errors.phone_number }}
+            </div>
           </div>
         </td>
       </tr>
@@ -67,7 +118,9 @@
       <tr>
         <td><p>số dư</p></td>
         <td>
-          <p class="red-background"><span>{{ formattedBalance }}</span></p>
+          <p class="red-background">
+            <span>{{ formattedBalance }}</span>
+          </p>
         </td>
       </tr>
 
@@ -149,10 +202,8 @@ export default {
 
       this.loading = true;
       try {
-        const res = await Vue.axios.post(
-          `${process.env.VUE_APP_URL}/user-update`,
-          payload
-        );
+        const baseUrl = process.env.VUE_APP_URL || "";
+        await Vue.axios.post(`${baseUrl}/user-update`, payload);
         // refresh store user data
         this.$store.commit("get_user_data");
         this.editingField = null;
@@ -200,7 +251,8 @@ export default {
 
   mounted() {
     // ensure user data is loaded
-    if (!this.user || !this.user.id_account) this.$store.commit("get_user_data");
+    if (!this.user || !this.user.id_account)
+      this.$store.commit("get_user_data");
   },
   beforeDestroy() {
     this.clearSuccessMessage();
