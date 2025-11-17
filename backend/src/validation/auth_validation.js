@@ -23,8 +23,10 @@ let login = [
     .isLength({ max: 50 }).withMessage(auth_message.na_acc_too_long)
     .matches(/^[a-zA-Z0-9]+$/i).withMessage(auth_message.na_acc_type),
   check("password")
-    .isLength({ min: 5, max: 50 }).withMessage(auth_message.password_length)
-    .matches(/^[a-zA-Z0-9]+$/i).withMessage(auth_message.password_type)
+    // Make login password validation consistent with registration policy:
+    // require at least 8 characters and enforce the same password policy
+    .isLength({ min: 8, max: 50 }).withMessage(auth_message.password_length)
+    .matches(/^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/).withMessage(auth_message.password_policy)
 ]
 
 module.exports = {

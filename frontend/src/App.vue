@@ -33,8 +33,8 @@
           </router-link>
           <router-link v-if="is_login" to="/account">
             <div class="btn-account">
-              <strong>TÀI KHOẢN</strong>
-              <span>Ví: 0 VNĐ</span>
+              <strong>{{ displayName }}</strong>
+              <span>Ví: {{ formattedBalance }} VNĐ</span>
             </div>
           </router-link>
           <router-link v-if="!is_login" :to="{ name: 'Register' }">
@@ -102,11 +102,28 @@ export default {
     },
 
     is_login() {
-      if (this.$store.state.user_data.id_account) {
-        return this.$store.state.user_data;
+      return !!(
+        this.$store.state.user_data && this.$store.state.user_data.id_account
+      );
+    },
+    displayName() {
+      const ud = this.$store.state.user_data || {};
+      // Prefer username, fall back to name_account or a generic label
+      const raw = ud.username || ud.name_account || "TÀI KHOẢN";
+      // Trim long names for the nav (keep readable): max 16 chars
+      if (raw.length > 16) return raw.slice(0, 13) + "...";
+      return raw;
+    },
+    formattedBalance() {
+      const ud = this.$store.state.user_data || {};
+      // Accept common field names used by backends: balance, wallet, wallet_balance
+      const val = ud.balance ?? ud.wallet ?? ud.wallet_balance ?? 0;
+      const n = Number(val) || 0;
+      try {
+        return new Intl.NumberFormat("vi-VN").format(n);
+      } catch (e) {
+        return n.toString();
       }
-
-      return false;
     },
   },
 };
