@@ -24,7 +24,7 @@
             <option value="">Chọn nhà mạng</option>
             <option value="VIETTEL">VIETTEL</option>
             <option value="VINAPHONE">VINAPHONE</option>
-            <option value="MOBILEPHONE">MOBILEPHONE</option>
+            <option value="MOBIFONE">MOBIFONE</option>
           </select>
           <select v-model="amount">
             <option value="">Chọn mệnh giá</option>
@@ -43,8 +43,14 @@
 
           <button @click="recharge"><strong>NẠP THẺ</strong></button>
           <strong class="charge-notice"
-            >Hãy chọn đúng mệnh giá. Sai sẽ mất thẻ</strong
+            >Hãy chọn đúng mệnh giá. Sai sẽ mất 50% giá trị thẻ nạp</strong
           >
+          <div
+            v-if="formMessage"
+            :class="['form-message', formMessageType]"
+          >
+            {{ formMessage }}
+          </div>
         </div>
 
         <div class="top-charge-form" v-else>
@@ -84,7 +90,7 @@
           <option value="">Chọn mạng</option>
           <option value="VIETTEL">VIETTEL</option>
           <option value="VINAPHONE">VINAPHONE</option>
-          <option value="MOBILEPHONE">MOBILEPHONE</option>
+          <option value="MOBIFONE">MOBIFONE</option>
         </select>
         <select v-model="filterForm.status">
           <option value="">Trạng thái</option>
@@ -117,13 +123,14 @@
             <th>Nhận</th>
             <th>Ngày</th>
             <th>Request ID</th>
+            <th>Ghi chú</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="item in filteredHistory" :key="item._id">
             <td>
-              <span class="status-pill" :class="statusClass(item.status)">{{
-                formatStatus(item.status)
+              <span class="status-pill" :class="statusClass(item.status, item)">{{
+                formatStatus(item.status, item)
               }}</span>
             </td>
             <td>{{ item.code }}</td>
@@ -133,9 +140,10 @@
             <td>{{ formatCurrency(item.realAmount) }}</td>
             <td>{{ formatDate(item.createdAt) }}</td>
             <td>{{ item.request_id }}</td>
+            <td>{{ historyMessage(item) }}</td>
           </tr>
           <tr v-if="!filteredHistory.length">
-            <td colspan="8" class="empty-row">Không có dữ liệu phù hợp</td>
+            <td colspan="9" class="empty-row">Không có dữ liệu phù hợp</td>
           </tr>
         </tbody>
       </table>
@@ -184,6 +192,10 @@ export default {
       filterForm: defaultFilters(),
       activeFilters: defaultFilters(),
       refreshTimer: null,
+      statusTracker: {},
+      recentRequestId: null,
+      formMessage: "",
+      formMessageType: "info",
       fallbackLeaderboard: [
         { name: "crabbercac", amount: 50000 },
         { name: "nguyene", amount: 30000 },
@@ -205,12 +217,12 @@ export default {
     },
     totalReal() {
       return this.history
-        .filter((item) => item.status === "success")
+        .filter((item) => item.status === "success" || (item.status === "failed" && item.realAmount > 0))
         .reduce((sum, item) => sum + item.amount, 0);
     },
     totalReceived() {
       return this.history
-        .filter((item) => item.status === "success")
+        .filter((item) => item.status === "success" || (item.status === "failed" && item.realAmount > 0))
         .reduce((sum, item) => sum + item.realAmount, 0);
     },
     filteredHistory() {
@@ -270,23 +282,63 @@ export default {
     },
   },
   methods: {
+    setFormMessage(message, type = "info") {
+      this.formMessage = message;
+      this.formMessageType = type;
+    },
+    clearFormMessage() {
+      this.formMessage = "";
+      this.formMessageType = "info";
+    },
+    upsertHistoryItem(item) {
+      if (!item || !item._id) return;
+
+      const normalized = { ...item };
+      if (!normalized.createdAt) {
+        normalized.createdAt = new Date().toISOString();
+      }
+
+      const index = this.history.findIndex((entry) => entry._id === normalized._id);
+      if (index === -1) {
+        this.history = [normalized, ...this.history];
+      } else {
+        const nextHistory = [...this.history];
+        nextHistory.splice(index, 1, { ...nextHistory[index], ...normalized });
+        this.history = nextHistory;
+      }
+
+      this.statusTracker = {
+        ...this.statusTracker,
+        [normalized._id]: normalized.status,
+      };
+
+      this.schedulePendingRefresh();
+    },
     async recharge() {
       if (!this.isLoggedIn) {
-        alert("Vui lòng đăng nhập để nạp thẻ");
+        this.setFormMessage("Vui lòng đăng nhập để nạp thẻ", "error");
         this.$router.push("/login");
         return;
       }
+
       if (!this.telco || !this.amount || !this.code || !this.serial) {
-        alert("Vui lòng điền đầy đủ thông tin");
+        this.setFormMessage("Vui lòng điền đầy đủ thông tin", "error");
         return;
       }
+
+      this.clearFormMessage();
+
       try {
         const token = localStorage.getItem("token");
         if (!token) {
-          alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+          this.setFormMessage(
+            "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+            "error"
+          );
           this.$router.push("/login");
           return;
         }
+
         const response = await axios.post(
           "/recharge",
           {
@@ -301,25 +353,49 @@ export default {
             },
           }
         );
-        alert(response.data.message);
+
+        const pendingMessage =
+          (response && response.data && response.data.message) ||
+          "Thẻ đang được nạp, vui lòng chờ trong giây lát.";
+        this.setFormMessage(pendingMessage, "info");
         this.$store.commit("get_user_data");
+
+        const requestId =
+          response && response.data && response.data.data
+            ? response.data.data.request_id
+            : null;
+        if (requestId) {
+          this.recentRequestId = requestId;
+        }
+
         if (this.redirectAfterSubmit) {
           this.$router.push("/recharge");
           return;
         }
+
         if (this.showHistory) {
-          this.getHistory();
+          const pendingItem = response && response.data && response.data.data;
+          if (pendingItem) {
+            this.upsertHistoryItem({ ...pendingItem, status: pendingItem.status || "pending" });
+          }
+          await this.fetchHistory();
+        }
+
+        if (requestId) {
+          this.pollRechargeStatus(requestId).catch((err) =>
+            console.error("Poll recharge status failed", err)
+          );
         }
       } catch (error) {
         console.error("Recharge failed:", error);
-        if (error.response && error.response.data && error.response.data.message) {
-          alert(error.response.data.message);
-        } else {
-          alert("Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.");
+        let message = "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.";
+        if (error && error.response && error.response.data && error.response.data.message) {
+          message = error.response.data.message;
         }
+        this.setFormMessage(message, "error");
       }
     },
-    async getHistory() {
+    async fetchHistory() {
       if (!this.showHistory || !this.isLoggedIn) return;
       try {
         const token = localStorage.getItem("token");
@@ -329,8 +405,11 @@ export default {
             Authorization: `Bearer ${token}`,
           },
         });
-        this.history = response.data.data || [];
+        const nextHistory = response.data.data || [];
+        this.handleHistoryStatusChanges(nextHistory);
+        this.history = nextHistory;
         this.schedulePendingRefresh();
+        return nextHistory;
       } catch (error) {
         console.error(error);
       }
@@ -343,28 +422,36 @@ export default {
       const hasPending = this.history.some((item) => item.status === "pending");
       if (hasPending) {
         this.refreshTimer = setTimeout(() => {
-          this.getHistory();
+          this.fetchHistory();
         }, 4000);
       }
     },
-    formatStatus(status) {
+    formatStatus(status, item = null) {
+      const partialSuccess =
+        item && status === "failed" && item.realAmount && item.realAmount > 0;
+
+      if (status === "success" || partialSuccess) {
+        return "Thành công";
+      }
+
       switch (status) {
-        case "success":
-          return "Thẻ đúng";
         case "failed":
           return "Thẻ lỗi";
         case "pending":
           return "Đang chờ";
         case "error":
-          return "Thẻ sai/đã dùng";
+          return "Lỗi hệ thống";
         default:
           return "Không xác định";
       }
     },
-    statusClass(status) {
+    statusClass(status, item = null) {
+      const partialSuccess =
+        item && status === "failed" && item.realAmount && item.realAmount > 0;
+
       return {
-        "status-success": status === "success",
-        "status-failed": status === "failed",
+        "status-success": status === "success" || partialSuccess,
+        "status-failed": status === "failed" && !partialSuccess,
         "status-error": status === "error",
         "status-pending": status === "pending",
       };
@@ -397,9 +484,10 @@ export default {
         "Nhận",
         "Ngày",
         "Request ID",
+        "Ghi chú",
       ];
       const csvRows = rows.map((item) => [
-        this.formatStatus(item.status),
+        this.formatStatus(item.status, item),
         item.code,
         item.serial,
         item.telco,
@@ -407,6 +495,7 @@ export default {
         this.formatCurrency(item.realAmount),
         this.formatDate(item.createdAt),
         item.request_id,
+        this.historyMessage(item),
       ]);
       const csvContent = [headers, ...csvRows]
         .map((row) => row.join(","))
@@ -423,13 +512,131 @@ export default {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     },
+    handleHistoryStatusChanges(nextHistory) {
+      const nextTracker = {};
+      let shouldRefreshUser = false;
+
+      nextHistory.forEach((item) => {
+        if (!item || !item._id) return;
+
+        const currentStatus = item.status;
+        const prevStatus = this.statusTracker[item._id];
+        nextTracker[item._id] = currentStatus;
+
+        if (!prevStatus) {
+          return;
+        }
+
+        if (prevStatus === "pending" && currentStatus !== "pending") {
+          if (item.request_id) {
+            if (this.recentRequestId === item.request_id) {
+              const message = this.historyMessage(item);
+              const type = currentStatus === "success" ? "success" : "error";
+              if (message) {
+                this.setFormMessage(message, type);
+              }
+              this.recentRequestId = null;
+            }
+          }
+
+          if (item.realAmount && item.realAmount > 0) {
+            shouldRefreshUser = true;
+          }
+        }
+      });
+
+      this.statusTracker = nextTracker;
+
+      if (shouldRefreshUser) {
+        this.$store.commit("get_user_data");
+      }
+    },
+    historyMessage(item) {
+      if (!item) return "";
+      if (item.message && item.message.trim()) return item.message;
+
+      switch (item.status) {
+        case "success":
+          return "Nạp thẻ thành công.";
+        case "failed":
+          if (item.realAmount && item.realAmount > 0) {
+            return "Sai mệnh giá, chỉ nhận 50% mệnh giá thực tế của thẻ.";
+          }
+          return "Thẻ lỗi, vui lòng kiểm tra lại.";
+        case "error":
+          return "Có lỗi khi xử lý thẻ, vui lòng thử lại.";
+        case "pending":
+          return "Thẻ đang được xử lý.";
+        default:
+          return "";
+      }
+    },
+    async pollRechargeStatus(requestId) {
+      const token = localStorage.getItem("token");
+      if (!token || !requestId) return;
+
+      const maxAttempts = 10;
+      for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        try {
+          const res = await axios.get(`/recharge/status/${requestId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const payload = res && res.data && res.data.data;
+          if (!payload) {
+            continue;
+          }
+
+          const { status, message, realAmount } = payload;
+
+          if (status === "pending") {
+            continue;
+          }
+
+          if (this.showHistory) {
+            await this.fetchHistory();
+          } else {
+            const msg = message || this.historyMessage(payload);
+            const type = status === "success" ? "success" : "error";
+            if (msg) {
+              this.setFormMessage(msg, type);
+            }
+          }
+
+          if (realAmount && realAmount > 0) {
+            this.$store.commit("get_user_data");
+          }
+
+          return;
+        } catch (err) {
+          if (err && err.response && err.response.status === 404) {
+            continue;
+          }
+          console.error("Unable to get recharge status", err);
+          if (!this.showHistory) {
+            this.setFormMessage(
+              "Không thể kiểm tra trạng thái thẻ lúc này. Vui lòng kiểm tra lại sau.",
+              "error"
+            );
+          }
+          break;
+        }
+      }
+
+      if (this.showHistory) {
+        await this.fetchHistory();
+      }
+    },
   },
   watch: {
     user: {
       deep: false,
       handler(newVal) {
         if (this.showHistory && newVal && newVal.id_account) {
-          this.getHistory();
+          this.fetchHistory();
         }
       },
     },
@@ -438,7 +645,7 @@ export default {
     if (!this.isLoggedIn) {
       this.$store.commit("get_user_data");
     } else if (this.showHistory) {
-      this.getHistory();
+      this.fetchHistory();
     }
   },
   beforeDestroy() {
@@ -496,6 +703,31 @@ export default {
       display: flex;
       flex-direction: column;
       gap: 10px;
+    }
+
+    .form-message {
+      margin-top: 4px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+
+      &.info {
+        color: #fcd34d;
+        border-color: rgba(252, 211, 77, 0.4);
+      }
+
+      &.success {
+        color: #34d399;
+        border-color: rgba(52, 211, 153, 0.45);
+      }
+
+      &.error {
+        color: #f87171;
+        border-color: rgba(248, 113, 113, 0.45);
+      }
     }
 
     input,

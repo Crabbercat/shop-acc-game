@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 
 import HomePage from "@/components/HomePage";
 import RechargeOnlinePage from "@/components/RechargeOnlinePage";
+import AutoAtmRechargePage from "@/components/AutoAtmRechargePage";
 import LoginPage from "@/components/LoginPage";
 import RegisterPage from "@/components/RegisterPage";
 import AccountCategories from "@/components/AccountCategories";
@@ -15,6 +16,11 @@ Vue.use(VueRouter);
 const routes = [
   { path: "/", name: "Home", component: HomePage },
   { path: "/recharge", name: "RechargeOnline", component: RechargeOnlinePage },
+  {
+    path: "/atm-momo",
+    name: "AtmMomoRecharge",
+    component: AutoAtmRechargePage,
+  },
   { path: "/login", name: "Login", component: LoginPage },
   { path: "/register", name: "Register", component: RegisterPage },
   { path: "/account", name: "UserAccountPage", component: UserAccountPage },

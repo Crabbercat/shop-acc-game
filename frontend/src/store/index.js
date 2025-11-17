@@ -26,6 +26,9 @@ export default new Vuex.Store({
     user_data: cachedUser(),
   },
   mutations: {
+    set_dark_mode(state, payload) {
+      state.darkMode = !!payload;
+    },
     get_user_data(state) {
       Vue.axios
         .get(`${process.env.VUE_APP_URL}/get-home-page-user-data`)

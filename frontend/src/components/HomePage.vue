@@ -58,7 +58,7 @@ export default {
   },
 
   mounted() {
-    this.$store.state.darkMode = true;
+    this.$store.commit("set_dark_mode", true);
     this.$store.commit("get_user_data");
   },
 };

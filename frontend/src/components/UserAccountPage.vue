@@ -5,7 +5,7 @@
         <div class="avatar">
           <img src="@/assets/images/avatar-user.jpg" alt="" />
         </div>
-        <p class="username"><strong>Dũng Dương - ( ID: 745508)</strong></p>
+        <p class="username"><strong>{{ displayLabel }}</strong></p>
       </div>
       <div class="wrap-user-infor">
         <div class="navigation">
@@ -134,6 +134,50 @@ export default {
     };
   },
 
+  computed: {
+    user() {
+      return this.$store.state.user_data || {};
+    },
+
+    displayName() {
+      const username = (this.user.username || "").toString().trim();
+      if (username) return username;
+
+      const fallbackName = (this.user.name_account || "").toString().trim();
+      if (fallbackName) return fallbackName;
+
+      return "Người dùng";
+    },
+
+    displayId() {
+      const raw = this.user.id_account;
+
+      if (raw === undefined || raw === null || raw === "") return null;
+
+      const asNumber = Number(raw);
+      if (!Number.isNaN(asNumber)) {
+        if (asNumber >= 0 && asNumber <= 9999) {
+          return asNumber.toString().padStart(4, "0");
+        }
+        return asNumber.toString();
+      }
+
+      const asString = raw.toString().trim();
+      if (!asString) return null;
+
+      if (/^\d+$/.test(asString) && Number(asString) <= 9999) {
+        return asString.padStart(4, "0");
+      }
+
+      return asString;
+    },
+
+    displayLabel() {
+      const id = this.displayId;
+      return id ? `${this.displayName} - (ID: ${id})` : this.displayName;
+    },
+  },
+
   methods: {
     navigateTo(target) {
       Object.keys(this.nav).forEach((item) => {
@@ -145,7 +189,7 @@ export default {
   },
 
   mounted() {
-    this.$store.state.darkMode = false;
+    this.$store.commit("set_dark_mode", false);
     this.$store.commit("get_user_data");
   },
 };

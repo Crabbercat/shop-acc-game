@@ -124,7 +124,10 @@ const user_update_profile = async (req, res) => {
             phone_number: user.phone_number,
         };
 
-        return res.status(200).send(data_return);
+        return res.status(200).send({
+            message: auth_message.update_profile_success,
+            ...data_return,
+        });
     } catch (err) {
         // forward structured errors
         if (Array.isArray(err)) return res.status(400).send(err);

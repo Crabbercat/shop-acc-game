@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const RechargeHistorySchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'user',
+    ref: 'users',
     required: true
   },
   telco: {
@@ -23,6 +23,10 @@ const RechargeHistorySchema = new Schema({
     type: Number,
     required: true
   },
+  cardAmount: {
+    type: Number,
+    default: null
+  },
   realAmount: {
     type: Number,
     required: true
@@ -36,6 +40,10 @@ const RechargeHistorySchema = new Schema({
     type: String,
     required: true,
     unique: true
+  },
+  message: {
+    type: String,
+    default: ''
   }
 }, { timestamps: true });
 

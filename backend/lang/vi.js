@@ -10,6 +10,7 @@ module.exports.auth_message = {
     create_success: "Tạo tài khoản thành công. Bây giờ bạn có thể đăng nhập vào tài khoản của mình",
     unknown_error: "Đã có lỗi không xác định xảy ra, nếu lỗi này còn tiếp tục vui lòng liên hệ admin",
     phone_number_existed: "Số điện thoại đã được đăng ký!",
+    update_profile_success: "Cập nhật thông tin thành công!",
 
     login_invalid: "Tài khoản hoặc mật khẩu không đúng xin vui lòng kiểm tra lại."
 }

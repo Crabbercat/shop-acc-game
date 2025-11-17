@@ -16,7 +16,7 @@
               >
             </li>
             <li>
-              <router-link :to="{ name: 'RechargeOnline' }"
+              <router-link :to="{ name: 'AtmMomoRecharge' }"
                 >NẠP ATM/MOMO TẶNG 25% TỰ ĐỘNG 24/24</router-link
               >
             </li>

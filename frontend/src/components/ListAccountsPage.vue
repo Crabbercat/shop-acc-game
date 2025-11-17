@@ -1350,7 +1350,7 @@ export default {
   },
 
   mounted() {
-    this.$store.state.darkMode = false;
+    this.$store.commit("set_dark_mode", false);
     this.pathName = this.$route.params.typeAccount;
   },
 };

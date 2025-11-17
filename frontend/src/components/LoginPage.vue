@@ -41,7 +41,7 @@ export default {
   },
 
   mounted() {
-    this.$store.state.darkMode = false;
+    this.$store.commit("set_dark_mode", false);
     this.$store.commit("get_user_data");
 
     let _this = this;

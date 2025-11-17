@@ -30,6 +30,17 @@ const rechargeController = {
         message: error.message
       });
     }
+  },
+  getStatus: async (req, res) => {
+    try {
+      const requestId = req.params.requestId;
+      const result = await rechargeService.getStatusByRequestId(req.user._id, requestId);
+      return res.status(result.status).json(result);
+    } catch (error) {
+      return res.status(500).json({
+        message: error.message
+      });
+    }
   }
 };
 
