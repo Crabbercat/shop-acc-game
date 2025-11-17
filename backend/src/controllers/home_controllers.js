@@ -15,6 +15,7 @@ const get_home_page_user_data = async (req, res) => {
       id_account: user_data.id_account,
       name_account: user_data.name_account,
       phone_number: user_data.phone_number,
+      balance: user_data.balance || 0,
     };
 
     return res.status(200).send(data_return);

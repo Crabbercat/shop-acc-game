@@ -17,6 +17,10 @@ let user_schema = new Schema({
   removed_time: {type: Number, default: null},
   update_time: {type: Number, default: null},
   created_time: {type: Number, default: Date.now()},
+  balance: {
+    type: Number,
+    default: 0
+  },
 });
 
 

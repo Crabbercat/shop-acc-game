@@ -1,6 +1,8 @@
 <template>
+  <div class="standalone-recharge">
+    <RechargeOnline :show-history="true" />
+  </div>
   <!-- Render the full recharge UI (reuses the component shown on the home page) -->
-  <RechargeOnline />
 </template>
 
 <script>
@@ -11,4 +13,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.standalone-recharge {
+  margin-top: 53px;
+  padding-top: 1px;
+}
+</style>

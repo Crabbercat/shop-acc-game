@@ -6,5 +6,10 @@
     "install-be": "npm --prefix backend install",
     "install-fe": "npm --prefix frontend install",
     "install-all": "npm run install-be && npm run install-fe"
+  },
+  "dependencies": {
+    "joi": "^18.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^13.0.0"
   }
 }

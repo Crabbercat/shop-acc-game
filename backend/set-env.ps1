@@ -30,6 +30,7 @@ $env:DB_NAME = 'shopgame'
 
 # Session
 $env:SESSION_SECRET = 'test'
+$env:JWT_SECRET = 'dev-secret-key'
 
 # Node environment
 $env:NODE_ENV = 'development'

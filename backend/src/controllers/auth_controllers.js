@@ -2,6 +2,9 @@ const { auth_services } = require('../services/index');
 const user_models = require('../models/user_models');
 const { auth_message } = require("../../lang/vi");
 const { message_to_client } = require("../helper/message_helper");
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';
 
 const { validationResult } = require('express-validator');
 
@@ -51,11 +54,15 @@ const user_login = async (req, res) => {
 
             req.session.user_id = user_data._id;
 
+            const token = jwt.sign({ _id: user_data._id }, JWT_SECRET, { expiresIn: '2h' });
+
             const data_return = {
                 username: user_data.username,
                 id_account: user_data.id_account,
                 name_account: user_data.name_account,
                 phone_number: user_data.phone_number,
+                balance: user_data.balance || 0,
+                token,
             };
 
             return res.status(200).send(data_return);

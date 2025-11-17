@@ -29,7 +29,7 @@
       <div @click="closeNoticeBox" class="black-ground"></div>
     </div>
     <section>
-      <RechargeOnline />
+      <RechargeOnline :redirect-after-submit="true" />
       <ListGameAccount />
       <div class="hot-mini-game">
         <div class="title"><strong>mini game siêu hot</strong></div>
