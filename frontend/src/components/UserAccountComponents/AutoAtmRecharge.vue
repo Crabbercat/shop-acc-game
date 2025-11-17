@@ -178,22 +178,22 @@ export default {
 
     transferCode() {
       const id = this.userId;
-      if (id === undefined || id === null || id === "") return "guitien";
+      if (id === undefined || id === null || id === "") return "naptien";
 
       const num = Number(id);
       if (!Number.isNaN(num)) {
         if (num >= 0 && num <= 9999) {
-          return `guitien ${num.toString().padStart(4, "0")}`;
+          return `naptien ${num.toString().padStart(4, "0")}`;
         }
-        return `guitien ${num}`;
+        return `naptien ${num}`;
       }
 
       const raw = id.toString().trim();
-      if (!raw) return "guitien";
+      if (!raw) return "naptien";
       if (/^\d+$/.test(raw) && Number(raw) <= 9999) {
-        return `guitien ${raw.padStart(4, "0")}`;
+        return `naptien ${raw.padStart(4, "0")}`;
       }
-      return `guitien ${raw}`;
+      return `naptien ${raw}`;
     },
   },
 
