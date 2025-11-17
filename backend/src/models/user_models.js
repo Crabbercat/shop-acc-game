@@ -2,21 +2,21 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 let user_schema = new Schema({
-  username: {type: String, default: "Người dùng"},
-  name_account: {type: String},
-  id_account: {type: Number, default: 0},
-  phone_number: {type: String},
+  username: { type: String, default: "Người dùng" },
+  name_account: { type: String },
+  id_account: { type: Number, default: 0 },
+  phone_number: { type: String },
   password: String,
 
   facebook: {
     id: String,
     token: String,
-    email: {type: String, trim: true}
+    email: { type: String, trim: true }
   },
 
-  removed_time: {type: Number, default: null},
-  update_time: {type: Number, default: null},
-  created_time: {type: Number, default: Date.now()},
+  removed_time: { type: Number, default: null },
+  update_time: { type: Number, default: null },
+  created_time: { type: Number, default: Date.now() },
   balance: {
     type: Number,
     default: 0
@@ -26,11 +26,11 @@ let user_schema = new Schema({
 
 user_schema.statics = {
   find_user_by_id(user_id) {
-    return this.findOne({"_id": user_id}).exec();
+    return this.findOne({ "_id": user_id }).exec();
   },
 
   find_by_name_account(name_account) {
-    return this.findOne({"name_account": name_account}).exec();
+    return this.findOne({ "name_account": name_account }).exec();
   },
 
   create_new(user_data) {
@@ -42,12 +42,12 @@ user_schema.statics = {
   },
 
   find_by_phone_number(phone_number) {
-    return this.findOne({"phone_number": phone_number }).exec();
+    return this.findOne({ "phone_number": phone_number }).exec();
   }
 }
 
-user_schema.pre("save", function(next) {
-  if(this.isNew) {
+user_schema.pre("save", function (next) {
+  if (this.isNew) {
     user_model.countDocuments().then(res => {
       this.id_account = res + 1000; // Increment count
       next();
