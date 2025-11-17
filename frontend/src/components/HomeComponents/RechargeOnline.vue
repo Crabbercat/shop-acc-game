@@ -200,7 +200,7 @@ export default {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
-        text-shadow: 0 1px 0 rgba(0,0,0,0.12);
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
         font-family: inherit;
       }
 

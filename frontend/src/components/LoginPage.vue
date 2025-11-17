@@ -65,13 +65,21 @@ export default {
 
       // Keep username checks, but allow passwords to contain special characters
       // and require at least 8 characters (same as registration policy)
-        if (this.name_account.length < 5 || this.name_account.length > 50 || !re.test(this.name_account) || this.password.length < 8 || this.password.length > 50) {
-          const msg = (this.$t ? this.$t("login_invalid") : "Tên tài khoản hoặc mật khẩu không hợp lệ");
-          this.error = msg;
-          return false;
-        }
+      if (
+        this.name_account.length < 5 ||
+        this.name_account.length > 50 ||
+        !re.test(this.name_account) ||
+        this.password.length < 8 ||
+        this.password.length > 50
+      ) {
+        const msg = this.$t
+          ? this.$t("login_invalid")
+          : "Tên tài khoản hoặc mật khẩu không hợp lệ";
+        this.error = msg;
+        return false;
+      }
 
-      const baseUrl = process.env.VUE_APP_URL || '';
+      const baseUrl = process.env.VUE_APP_URL || "";
 
       Vue.axios
         .post(`${baseUrl}/user-login`, {
