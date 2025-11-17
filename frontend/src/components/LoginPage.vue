@@ -41,7 +41,7 @@ export default {
   },
 
   mounted() {
-    this.$store.state.darkMode = false;
+    this.$store.commit("set_dark_mode", false);
     this.$store.commit("get_user_data");
 
     let _this = this;
@@ -87,7 +87,10 @@ export default {
           password: this.password,
         })
         .then((res) => {
-          this.$store.state.user_data = res.data;
+          if (res.data && res.data.token) {
+            localStorage.setItem("token", res.data.token);
+          }
+          this.$store.commit("set_user_data", res.data);
           this.$router.push("/");
         })
         .catch((errors) => {

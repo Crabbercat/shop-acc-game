@@ -29,7 +29,7 @@
       <div @click="closeNoticeBox" class="black-ground"></div>
     </div>
     <section>
-      <RechargeOnline />
+      <RechargeOnline :redirect-after-submit="true" />
       <ListGameAccount />
       <div class="hot-mini-game">
         <div class="title"><strong>mini game siêu hot</strong></div>
@@ -58,7 +58,7 @@ export default {
   },
 
   mounted() {
-    this.$store.state.darkMode = true;
+    this.$store.commit("set_dark_mode", true);
     this.$store.commit("get_user_data");
   },
 };

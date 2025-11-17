@@ -4,6 +4,7 @@ const router = express.Router();
 const { home_validation, auth_validation } = require("../validation/index");
 
 const { auth_controllers, home_controllers } = require("../controllers/index");
+const rechargeRouter = require('./recharge');
 
 function init_routes(app) {
   router.post(
@@ -28,6 +29,8 @@ function init_routes(app) {
   );
 
   router.get("/user-logout", home_controllers.user_logout);
+
+  router.use(rechargeRouter);
 
   // catch 404 and forward to error handler
   router.use(function (req, res, next) {

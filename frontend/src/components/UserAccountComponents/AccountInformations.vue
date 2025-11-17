@@ -1,6 +1,7 @@
 <template>
   <div class="account-informations">
     <div class="title"><strong>thông tin tài khoản</strong></div>
+    <div v-if="successMessage" class="success">{{ successMessage }}</div>
 
     <table>
       <tr>
@@ -125,7 +126,7 @@
 
       <tr>
         <td><p>ngày tham gia</p></td>
-        <td>03/06/2021</td>
+        <td>{{ formattedJoinDate }}</td>
       </tr>
     </table>
   </div>
@@ -144,6 +145,8 @@ export default {
     },
     errors: {},
     loading: false,
+    successMessage: "",
+    successTimeout: null,
   }),
 
   computed: {
@@ -159,22 +162,35 @@ export default {
         return val + " VNĐ";
       }
     },
+
+    formattedJoinDate() {
+      const raw = this.user.created_at || this.user.createdAt || this.user.join_date;
+      if (!raw) return "--";
+
+      const date = new Date(raw);
+      if (Number.isNaN(date.getTime())) return raw;
+
+      return date.toLocaleDateString("vi-VN");
+    },
   },
 
   methods: {
     startEdit(field) {
       this.editingField = field;
       this.errors = {};
+      this.clearSuccessMessage();
       this.editValues[field] = this.user[field] || "";
     },
 
     cancelEdit() {
       this.editingField = null;
       this.errors = {};
+      this.clearSuccessMessage();
     },
 
     async saveEdit(field) {
       this.errors = {};
+      this.clearSuccessMessage();
       const payload = {};
       payload[field] = this.editValues[field];
 
@@ -191,7 +207,11 @@ export default {
         // refresh store user data
         this.$store.commit("get_user_data");
         this.editingField = null;
+        const msg =
+          (res && res.data && res.data.message) || "Cập nhật thông tin thành công!";
+        this.setSuccessMessage(msg);
       } catch (err) {
+        this.clearSuccessMessage();
         if (err && err.response && err.response.data) {
           const d = err.response.data;
           if (Array.isArray(d) && d.length > 0 && d[0].param) {
@@ -210,12 +230,32 @@ export default {
         this.loading = false;
       }
     },
+    setSuccessMessage(message) {
+      if (this.successTimeout) {
+        clearTimeout(this.successTimeout);
+      }
+      this.successMessage = message;
+      this.successTimeout = setTimeout(() => {
+        this.successMessage = "";
+        this.successTimeout = null;
+      }, 4000);
+    },
+    clearSuccessMessage() {
+      if (this.successTimeout) {
+        clearTimeout(this.successTimeout);
+        this.successTimeout = null;
+      }
+      this.successMessage = "";
+    },
   },
 
   mounted() {
     // ensure user data is loaded
     if (!this.user || !this.user.id_account)
       this.$store.commit("get_user_data");
+  },
+  beforeDestroy() {
+    this.clearSuccessMessage();
   },
 };
 </script>
@@ -271,5 +311,11 @@ export default {
 .error {
   color: red;
   margin-top: 6px;
+}
+
+.success {
+  color: var(--green-btn, #28a745);
+  margin: 10px 0;
+  font-weight: 600;
 }
 </style>

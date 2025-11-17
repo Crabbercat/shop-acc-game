@@ -51,7 +51,9 @@
             <p>
               <strong
                 >nạp atm/momo tặng 25% tự động 24/24 -
-                <router-link to="/">xem tại đây</router-link></strong
+                <router-link :to="{ name: 'AtmMomoRecharge' }"
+                  >xem tại đây</router-link
+                ></strong
               >
             </p>
           </div>
@@ -149,7 +151,7 @@ export default {
   },
 
   mounted() {
-    this.$store.state.darkMode = false;
+    this.$store.commit("set_dark_mode", false);
     this.accountID = this.$route.params.accountID;
   },
 };

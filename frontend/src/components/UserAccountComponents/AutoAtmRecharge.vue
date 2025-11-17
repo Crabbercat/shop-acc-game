@@ -1,6 +1,6 @@
 <template>
   <div class="auto-atm-recharge">
-    <div class="title"><strong>nạp tiền atm/momo tự động 24/24</strong></div>
+    <div class="title"><strong>Nạp tiền atm/momo tự động 24/24</strong></div>
     <div class="red-text">
       Nạp tiền atm/momo tự động 100%, cộng tiền vào tài khoản shop sau 5 - 30
       giây
@@ -10,7 +10,7 @@
         <div class="left">
           <img src="@/assets/images/atm-recharge.png" alt="" />
           <div class="text">
-            <h2>Chuyển khoản qua Vietcombank</h2>
+            <h2>Chuyển khoản qua BIDV</h2>
             <p>Chuyển khoản ngân hàng online.</p>
           </div>
         </div>
@@ -20,11 +20,18 @@
       </div>
       <div class="detail" v-show="showAtmRecharge">
         <p class="red-text"><strong>THÔNG TIN TÀI KHOẢN NGÂN HÀNG</strong></p>
-        <p class="red-text"><strong>CHỦ TÀI KHOẢN: TRẦN VIỆT TÙNG</strong></p>
+        <div class="qr-wrapper">
+          <img
+            src="@/assets/images/QR_banking.jpg"
+            alt="QR ngân hàng"
+            class="qr-image"
+          />
+        </div>
+        <p class="red-text"><strong>CHỦ TÀI KHOẢN: HUYNH PHUOC LOC</strong></p>
         <p class="red-text">
           <strong
-            >VIETCOMBANK:
-            <span ref="bankAcocuntNumber">0451000413951</span></strong
+            >BIDV:
+            <span ref="bankAcocuntNumber">5660569833</span></strong
           >
         </p>
         <div class="btn-copy copy-small">
@@ -38,7 +45,7 @@
         <p>Nội dung chuyển khoản của bạn:</p>
         <div class="transfer-content">
           <div class="code">
-            <b class="red-text" ref="bankTransferContent">guitien 745508</b>
+            <b class="red-text" ref="bankTransferContent">{{ transferCode }}</b>
           </div>
           <div class="btn-copy copy-big">
             <span
@@ -57,7 +64,7 @@
         <p>
           <b>Lưu ý: </b>Vui lòng ghi đúng nội dung chuyển khoản
           <b class="red-text border-dashed"
-            ><b class="red-text">guitien 745508</b></b
+            ><b class="red-text">{{ transferCode }}</b></b
           >. Nếu không hệ thống sẽ không thể cộng tiền vào tài khoản của bạn.
         </p>
         <p>
@@ -86,10 +93,17 @@
       </div>
       <div class="detail" v-show="showMomoRecharge">
         <p class="red-text"><strong>THÔNG TIN VÍ ĐIỆN TỬ</strong></p>
-        <p class="red-text"><strong>CHỦ TÀI KHOẢN: TRẦN VIỆT TÙNG</strong></p>
+        <div class="qr-wrapper">
+          <img
+            src="@/assets/images/QR_momo.jpg"
+            alt="QR Momo"
+            class="qr-image"
+          />
+        </div>
+        <p class="red-text"><strong>CHỦ TÀI KHOẢN: HUYNH PHUOC LOC</strong></p>
         <p class="red-text">
           <strong
-            >VÍ MOMO: <span ref="momoAcountNumber">0398793456</span></strong
+            >VÍ MOMO: <span ref="momoAcountNumber">0905814810</span></strong
           >
         </p>
         <div class="btn-copy copy-small">
@@ -103,7 +117,7 @@
         <p>Nội dung chuyển khoản của bạn:</p>
         <div class="transfer-content">
           <div class="code">
-            <b class="red-text" ref="momoTransferContent">guitien 745508</b>
+            <b class="red-text" ref="momoTransferContent">{{ transferCode }}</b>
           </div>
           <div class="btn-copy copy-big">
             <span
@@ -130,7 +144,7 @@
         <p>
           <b>Lưu ý: </b>Vui lòng ghi đúng nội dung chuyển khoản
           <b class="red-text border-dashed"
-            ><b class="red-text">guitien 745508</b></b
+            ><b class="red-text">{{ transferCode }}</b></b
           >. Nếu không hệ thống sẽ không thể cộng tiền vào tài khoản của bạn.
         </p>
         <p>
@@ -156,6 +170,33 @@ export default {
     };
   },
 
+  computed: {
+    userId() {
+      const ud = this.$store.state.user_data || {};
+      return ud.id_account || ud.idAccount || ud.user_id || ud.id;
+    },
+
+    transferCode() {
+      const id = this.userId;
+      if (id === undefined || id === null || id === "") return "naptien";
+
+      const num = Number(id);
+      if (!Number.isNaN(num)) {
+        if (num >= 0 && num <= 9999) {
+          return `naptien ${num.toString().padStart(4, "0")}`;
+        }
+        return `naptien ${num}`;
+      }
+
+      const raw = id.toString().trim();
+      if (!raw) return "naptien";
+      if (/^\d+$/.test(raw) && Number(raw) <= 9999) {
+        return `naptien ${raw.padStart(4, "0")}`;
+      }
+      return `naptien ${raw}`;
+    },
+  },
+
   methods: {
     changeView(num) {
       if (num == 1) {
@@ -169,8 +210,9 @@ export default {
     },
 
     copyValue(refValueName, refBtnName) {
-      let value = this.$refs[refValueName];
-      navigator.clipboard.writeText(value.innerHTML);
+      const el = this.$refs[refValueName];
+      const text = el ? (el.innerText || el.textContent || "") : "";
+      if (text) navigator.clipboard.writeText(text);
 
       this.$refs[refBtnName].classList.add("coppied");
       this.$refs[refBtnName].innerHTML = "Đã sao chép";
@@ -280,6 +322,19 @@ export default {
           border-style: dashed;
           border-radius: 5px;
           margin-right: 10px;
+        }
+      }
+      .qr-wrapper {
+        display: flex;
+        justify-content: center;
+        margin: 12px 0;
+
+        .qr-image {
+          max-width: 220px;
+          width: 100%;
+          height: auto;
+          border-radius: 6px;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
         }
       }
       .transfer-confirm-block {

@@ -6,7 +6,7 @@
         <option value="">Chọn nhà mạng</option>
         <option value="viettel">VIETTEL</option>
         <option value="vinaphone">VINAPHONE</option>
-        <option value="mobilephone">MOBILEPHONE</option>
+        <option value="MOBIFONE">MOBIFONE</option>
       </select>
       <select name="card-value" id="card-value">
         <option value="">Chọn mệnh giá</option>
@@ -25,7 +25,7 @@
 
       <button><strong>NẠP THẺ</strong></button>
       <strong class="charge-notice"
-        >Hãy chọn đúng mệnh giá. Sai sẽ mất thẻ</strong
+        >Hãy chọn đúng mệnh giá. Sai sẽ mất 50% giá trị thẻ nạp</strong
       >
     </div>
     <div class="title"><strong>thẻ nạp gần nhất</strong></div>

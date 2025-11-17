@@ -16,7 +16,7 @@
               >
             </li>
             <li>
-              <router-link :to="{ name: 'RechargeOnline' }"
+              <router-link :to="{ name: 'AtmMomoRecharge' }"
                 >NẠP ATM/MOMO TẶNG 25% TỰ ĐỘNG 24/24</router-link
               >
             </li>
@@ -88,7 +88,8 @@ export default {
       Vue.axios
         .get(`${process.env.VUE_APP_URL}/user-logout`)
         .then(() => {
-          this.$store.state.user_data = {};
+          this.$store.commit("clear_user_data");
+          localStorage.removeItem("token");
         })
         .catch((err) => {
           console.log(err);
