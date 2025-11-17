@@ -5,7 +5,7 @@
         <p class="eyebrow">Dịch vụ nạp tự động</p>
         <h1>NẠP ATM/MOMO TẶNG 25% TỰ ĐỘNG 24/24</h1>
         <p class="sub">
-          Nạp tiền qua Vietcombank hoặc ví Momo, tiền sẽ cộng vào ví sau 5 − 30
+          Nạp tiền qua BIDV hoặc ví Momo, tiền sẽ cộng vào ví sau 5 − 30
           giây. Chú ý nhập đúng nội dung chuyển khoản để hệ thống tự nhận diện.
         </p>
       </header>

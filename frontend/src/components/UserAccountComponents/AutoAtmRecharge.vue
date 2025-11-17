@@ -10,7 +10,7 @@
         <div class="left">
           <img src="@/assets/images/atm-recharge.png" alt="" />
           <div class="text">
-            <h2>Chuyển khoản qua Vietcombank</h2>
+            <h2>Chuyển khoản qua BIDV</h2>
             <p>Chuyển khoản ngân hàng online.</p>
           </div>
         </div>
@@ -20,11 +20,18 @@
       </div>
       <div class="detail" v-show="showAtmRecharge">
         <p class="red-text"><strong>THÔNG TIN TÀI KHOẢN NGÂN HÀNG</strong></p>
-        <p class="red-text"><strong>CHỦ TÀI KHOẢN: TRẦN VIỆT TÙNG</strong></p>
+        <div class="qr-wrapper">
+          <img
+            src="@/assets/images/QR_banking.jpg"
+            alt="QR ngân hàng"
+            class="qr-image"
+          />
+        </div>
+        <p class="red-text"><strong>CHỦ TÀI KHOẢN: HUYNH PHUOC LOC</strong></p>
         <p class="red-text">
           <strong
-            >VIETCOMBANK:
-            <span ref="bankAcocuntNumber">0451000413951</span></strong
+            >BIDV:
+            <span ref="bankAcocuntNumber">5660569833</span></strong
           >
         </p>
         <div class="btn-copy copy-small">
@@ -86,10 +93,17 @@
       </div>
       <div class="detail" v-show="showMomoRecharge">
         <p class="red-text"><strong>THÔNG TIN VÍ ĐIỆN TỬ</strong></p>
-        <p class="red-text"><strong>CHỦ TÀI KHOẢN: TRẦN VIỆT TÙNG</strong></p>
+        <div class="qr-wrapper">
+          <img
+            src="@/assets/images/QR_momo.jpg"
+            alt="QR Momo"
+            class="qr-image"
+          />
+        </div>
+        <p class="red-text"><strong>CHỦ TÀI KHOẢN: HUYNH PHUOC LOC</strong></p>
         <p class="red-text">
           <strong
-            >VÍ MOMO: <span ref="momoAcountNumber">0398793456</span></strong
+            >VÍ MOMO: <span ref="momoAcountNumber">0905814810</span></strong
           >
         </p>
         <div class="btn-copy copy-small">
@@ -308,6 +322,19 @@ export default {
           border-style: dashed;
           border-radius: 5px;
           margin-right: 10px;
+        }
+      }
+      .qr-wrapper {
+        display: flex;
+        justify-content: center;
+        margin: 12px 0;
+
+        .qr-image {
+          max-width: 220px;
+          width: 100%;
+          height: auto;
+          border-radius: 6px;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
         }
       }
       .transfer-confirm-block {
