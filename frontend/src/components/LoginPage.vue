@@ -40,6 +40,13 @@ export default {
     };
   },
 
+  computed: {
+    redirectTarget() {
+      const redirect = this.$route && this.$route.query && this.$route.query.redirect;
+      return redirect && typeof redirect === "string" ? redirect : "/";
+    },
+  },
+
   mounted() {
     this.$store.commit("set_dark_mode", false);
     this.$store.commit("get_user_data");
@@ -47,7 +54,7 @@ export default {
     let _this = this;
     setTimeout(() => {
       if (_this.$store.state.user_data && _this.$store.state.user_data.id_account)
-        _this.$router.push("/");
+        _this.$router.replace(_this.redirectTarget || "/");
     }, 0);
   },
 
@@ -84,7 +91,8 @@ export default {
             localStorage.setItem("token", res.data.token);
           }
           this.$store.commit("set_user_data", res.data);
-          this.$router.push("/");
+          const target = this.redirectTarget || "/";
+          this.$router.replace(target);
         })
         .catch((errors) => {
           if (errors.response) {

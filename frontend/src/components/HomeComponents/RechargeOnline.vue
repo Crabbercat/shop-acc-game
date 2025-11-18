@@ -45,11 +45,15 @@
           <strong class="charge-notice"
             >Hãy chọn đúng mệnh giá. Sai sẽ mất 50% giá trị thẻ nạp</strong
           >
-          <div
-            v-if="formMessage"
-            :class="['form-message', formMessageType]"
-          >
-            {{ formMessage }}
+          <div v-if="formMessage" :class="['form-message', formMessageType]">
+            <span class="form-message-text">{{ formMessage }}</span>
+            <router-link
+              v-if="showLoginLink"
+              class="form-message-login"
+              :to="loginLinkTarget"
+            >
+              Đăng nhập
+            </router-link>
           </div>
         </div>
 
@@ -196,6 +200,8 @@ export default {
       recentRequestId: null,
       formMessage: "",
       formMessageType: "info",
+      showLoginLink: false,
+      loginRedirectTarget: null,
       fallbackLeaderboard: [
         { name: "crabbercac", amount: 50000 },
         { name: "nguyene", amount: 30000 },
@@ -280,15 +286,23 @@ export default {
     currentMonthLabel() {
       return new Date().toLocaleString("vi-VN", { month: "long", year: "numeric" });
     },
+    loginLinkTarget() {
+      const redirect = this.loginRedirectTarget || (this.$route && this.$route.fullPath) || "/";
+      return { name: "Login", query: { redirect } };
+    },
   },
   methods: {
-    setFormMessage(message, type = "info") {
+    setFormMessage(message, type = "info", options = {}) {
       this.formMessage = message;
       this.formMessageType = type;
+      this.showLoginLink = !!options.showLoginLink;
+      this.loginRedirectTarget = options.redirect || null;
     },
     clearFormMessage() {
       this.formMessage = "";
       this.formMessageType = "info";
+      this.showLoginLink = false;
+      this.loginRedirectTarget = null;
     },
     upsertHistoryItem(item) {
       if (!item || !item._id) return;
@@ -316,8 +330,17 @@ export default {
     },
     async recharge() {
       if (!this.isLoggedIn) {
-        this.setFormMessage("Vui lòng đăng nhập để nạp thẻ", "error");
-        this.$router.push("/login");
+        const redirectTarget = this.redirectAfterSubmit
+          ? "/recharge"
+          : (this.$route && this.$route.fullPath) || "/recharge";
+        this.setFormMessage(
+          "Bạn cần đăng nhập để thực hiện chức năng này",
+          "error",
+          {
+            showLoginLink: true,
+            redirect: redirectTarget,
+          }
+        );
         return;
       }
 
@@ -333,9 +356,12 @@ export default {
         if (!token) {
           this.setFormMessage(
             "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
-            "error"
+            "error",
+            {
+              showLoginLink: true,
+              redirect: (this.$route && this.$route.fullPath) || "/recharge",
+            }
           );
-          this.$router.push("/login");
           return;
         }
 
@@ -707,12 +733,17 @@ export default {
 
     .form-message {
       margin-top: 4px;
-      padding: 10px 12px;
+      padding: 10px 14px;
       border-radius: 6px;
       font-size: 0.9rem;
       text-align: center;
       background-color: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.12);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
 
       &.info {
         color: #fcd34d;
@@ -727,6 +758,20 @@ export default {
       &.error {
         color: #f87171;
         border-color: rgba(248, 113, 113, 0.45);
+      }
+
+      .form-message-login {
+        color: #fbbf24;
+        font-weight: 600;
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 3px;
+        transition: color 0.15s ease;
+      }
+
+      .form-message-login:hover,
+      .form-message-login:focus {
+        color: #fde68a;
       }
     }
 
