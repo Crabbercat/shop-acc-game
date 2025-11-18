@@ -107,11 +107,43 @@ export default {
     },
     displayName() {
       const ud = this.$store.state.user_data || {};
-      // Prefer username, fall back to name_account or a generic label
-      const raw = ud.username || ud.name_account || "TÀI KHOẢN";
-      // Trim long names for the nav (keep readable): max 16 chars
-      if (raw.length > 16) return raw.slice(0, 13) + "...";
-      return raw;
+
+      const formatId = (raw) => {
+        if (raw === undefined || raw === null || raw === "") return null;
+
+        const numeric = Number(raw);
+        if (!Number.isNaN(numeric)) {
+          if (numeric >= 0 && numeric <= 9999) {
+            return numeric.toString().padStart(4, "0");
+          }
+          return numeric.toString();
+        }
+
+        const rawString = raw.toString().trim();
+        if (!rawString) return null;
+
+        if (/^\d+$/.test(rawString) && Number(rawString) <= 9999) {
+          return rawString.padStart(4, "0");
+        }
+
+        return rawString;
+      };
+
+      const formattedId = formatId(ud.id_account);
+      const rawName = (ud.username || ud.name_account || "").toString().trim();
+
+      let label = rawName;
+      if (!label) {
+        label = formattedId ? `Người dùng [${formattedId}]` : "TÀI KHOẢN";
+      } else if (label === "Người dùng" && formattedId) {
+        label = `Người dùng [${formattedId}]`;
+      }
+
+      const MAX_LENGTH = 22;
+      if (label.length > MAX_LENGTH) {
+        return label.slice(0, MAX_LENGTH - 3) + "...";
+      }
+      return label;
     },
     formattedBalance() {
       const ud = this.$store.state.user_data || {};
