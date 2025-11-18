@@ -16,6 +16,23 @@
       <tr>
         <td><p>tên hiển thị</p></td>
         <td>
+          <div v-if="editingField !== 'display_name'">
+            {{ user.display_name }}
+            <button class="edit-btn" @click="startEdit('display_name')" title="Sửa">✎</button>
+          </div>
+
+          <div v-else>
+            <input v-model="editValues.display_name" />
+            <button class="save-btn" @click="saveEdit('display_name')">Lưu</button>
+            <button class="cancel-btn" @click="cancelEdit">Hủy</button>
+            <div v-if="errors.display_name" class="error">{{ errors.display_name }}</div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td><p>tên tài khoản</p></td>
+        <td>
           <div v-if="editingField !== 'username'">
             {{ user.username }}
             <button class="edit-btn" @click="startEdit('username')" title="Sửa">✎</button>
@@ -26,23 +43,6 @@
             <button class="save-btn" @click="saveEdit('username')">Lưu</button>
             <button class="cancel-btn" @click="cancelEdit">Hủy</button>
             <div v-if="errors.username" class="error">{{ errors.username }}</div>
-          </div>
-        </td>
-      </tr>
-
-      <tr>
-        <td><p>tên tài khoản</p></td>
-        <td>
-          <div v-if="editingField !== 'name_account'">
-            {{ user.name_account }}
-            <button class="edit-btn" @click="startEdit('name_account')" title="Sửa">✎</button>
-          </div>
-
-          <div v-else>
-            <input v-model="editValues.name_account" />
-            <button class="save-btn" @click="saveEdit('name_account')">Lưu</button>
-            <button class="cancel-btn" @click="cancelEdit">Hủy</button>
-            <div v-if="errors.name_account" class="error">{{ errors.name_account }}</div>
           </div>
         </td>
       </tr>
@@ -86,8 +86,8 @@ export default {
   data: () => ({
     editingField: null,
     editValues: {
+      display_name: "",
       username: "",
-      name_account: "",
       phone_number: "",
     },
     errors: {},

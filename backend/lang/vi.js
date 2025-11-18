@@ -6,7 +6,7 @@ module.exports.auth_message = {
     password_type: "Mật khẩu không được chứa ký tự đặc biệt",
     password_policy: "Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ số và 1 ký tự đặc biệt",
     phone_number_invalid: "Số điện thoại bạn vừa nhập không chính xác!",
-    name_account_existed: "Tên tài khoản đã tồn tại, vui lòng sử dụng tên khác!",
+    username_existed: "Tên đăng nhập đã tồn tại, vui lòng sử dụng tên khác!",
     create_success: "Tạo tài khoản thành công. Bây giờ bạn có thể đăng nhập vào tài khoản của mình",
     unknown_error: "Đã có lỗi không xác định xảy ra, nếu lỗi này còn tiếp tục vui lòng liên hệ admin",
     phone_number_existed: "Số điện thoại đã được đăng ký!",

@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 let user_schema = new Schema({
-  username: { type: String, default: "Người dùng" },
-  name_account: { type: String },
+  display_name: { type: String, default: "Người dùng" },
+  username: { type: String },
   id_account: { type: Number, default: 0 },
   phone_number: { type: String },
   password: String,
@@ -14,7 +14,6 @@ let user_schema = new Schema({
     email: { type: String, trim: true }
   },
 
-  removed_time: { type: Number, default: null },
   update_time: { type: Number, default: null },
   created_time: { type: Number, default: Date.now() },
   balance: {
@@ -29,16 +28,22 @@ user_schema.statics = {
     return this.findOne({ "_id": user_id }).exec();
   },
 
-  find_by_name_account(name_account) {
-    return this.findOne({ "name_account": name_account }).exec();
+  find_by_username(username) {
+    return this.findOne({ "username": username }).exec();
   },
 
   create_new(user_data) {
-    return this.create({
-      "name_account": user_data.name_account,
+    const payload = {
+      "username": user_data.username,
       "phone_number": user_data.phone_number,
       "password": user_data.password,
-    });
+    };
+
+    if (user_data.display_name) {
+      payload.display_name = user_data.display_name;
+    }
+
+    return this.create(payload);
   },
 
   find_by_phone_number(phone_number) {

@@ -140,10 +140,10 @@ export default {
     },
 
     displayName() {
-      const username = (this.user.username || "").toString().trim();
-      if (username) return username;
+      const displayName = (this.user.display_name || "").toString().trim();
+      if (displayName) return displayName;
 
-      const fallbackName = (this.user.name_account || "").toString().trim();
+      const fallbackName = (this.user.username || "").toString().trim();
       if (fallbackName) return fallbackName;
 
       return "Người dùng";

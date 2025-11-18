@@ -1,7 +1,7 @@
 const { home_services } = require("../services/index");
 
 /**
- * @returns {username, id_account, name_account, phone_number}
+ * @returns {display_name, id_account, username, phone_number}
  */
 const get_home_page_user_data = async (req, res) => {
   let user_id = req.session.user_id;
@@ -11,9 +11,9 @@ const get_home_page_user_data = async (req, res) => {
     let user_data = await home_services.get_user_data(user_id);
 
     let data_return = {
-      username: user_data.username,
+      display_name: user_data.display_name,
       id_account: user_data.id_account,
-      name_account: user_data.name_account,
+      username: user_data.username,
       phone_number: user_data.phone_number,
       balance: user_data.balance || 0,
     };

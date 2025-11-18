@@ -2,7 +2,7 @@ const { check } = require('express-validator');
 const { auth_message } = require("../../lang/vi");
 
 let register = [
-  check("name_account")
+  check("username")
     .isLength({ min: 5 }).withMessage(auth_message.na_acc_too_short)
     .isLength({ max: 50 }).withMessage(auth_message.na_acc_too_long)
     .matches(/^[a-zA-Z0-9]+$/i).withMessage(auth_message.na_acc_type),
@@ -18,7 +18,7 @@ let register = [
 ]
 
 let login = [
-  check("name_account")
+  check("username")
     .isLength({ min: 5 }).withMessage(auth_message.na_acc_too_short)
     .isLength({ max: 50 }).withMessage(auth_message.na_acc_too_long)
     .matches(/^[a-zA-Z0-9]+$/i).withMessage(auth_message.na_acc_type),

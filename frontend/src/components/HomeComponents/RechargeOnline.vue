@@ -261,7 +261,7 @@ export default {
           const created = new Date(item.createdAt);
           if (created.getMonth() !== month || created.getFullYear() !== year) return;
           const name =
-            (item.user && (item.user.username || item.user.name_account)) ||
+            (item.user && (item.user.display_name || item.user.username)) ||
             "Ẩn danh";
           const current = totals.get(name) || 0;
           totals.set(name, current + item.realAmount);

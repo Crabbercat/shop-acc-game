@@ -380,7 +380,7 @@ const rechargeService = {
   getHistory: async (userId) => {
     const history = await RechargeHistory.find({ user: userId })
       .sort({ createdAt: -1 })
-      .populate('user', 'username name_account');
+      .populate('user', 'display_name username');
     return {
       status: 200,
       data: history

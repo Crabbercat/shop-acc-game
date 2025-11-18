@@ -6,7 +6,7 @@
       <div class="form">
         <p><strong>Tên tài khoản</strong></p>
         <input
-          v-model="name_account"
+          v-model="username"
           type="text"
           placeholder="Nhập tên tài khoản"
         />
@@ -34,7 +34,7 @@ import Vue from "vue";
 export default {
   data() {
     return {
-      name_account: null,
+      username: null,
       password: null,
       error: null,
     };
@@ -46,7 +46,8 @@ export default {
 
     let _this = this;
     setTimeout(() => {
-      if (_this.$store.state.user_data.username) _this.$router.push("/");
+      if (_this.$store.state.user_data && _this.$store.state.user_data.id_account)
+        _this.$router.push("/");
     }, 0);
   },
 
@@ -58,14 +59,14 @@ export default {
 
       this.remove_error();
 
-      if (!this.name_account || !this.password) {
+      if (!this.username || !this.password) {
         this.error = "Vui lòng nhập tên tài khoản và mật khẩu";
         return false;
       }
 
       // Keep username checks, but allow passwords to contain special characters
       // and require at least 8 characters (same as registration policy)
-        if (this.name_account.length < 5 || this.name_account.length > 50 || !re.test(this.name_account) || this.password.length < 8 || this.password.length > 50) {
+        if (this.username.length < 5 || this.username.length > 50 || !re.test(this.username) || this.password.length < 8 || this.password.length > 50) {
           const msg = (this.$t ? this.$t("login_invalid") : "Tên tài khoản hoặc mật khẩu không hợp lệ");
           this.error = msg;
           return false;
@@ -75,7 +76,7 @@ export default {
 
       Vue.axios
         .post(`${baseUrl}/user-login`, {
-          name_account: this.name_account,
+          username: this.username,
           password: this.password,
         })
         .then((res) => {

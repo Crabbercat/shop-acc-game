@@ -14,11 +14,12 @@ const user_register = async (req, res) => {
     if (result_valid.length > 0) return res.status(400).send(result_valid);
 
     try {
-        let name_account = req.body.name_account;
+        let username = req.body.username;
+        let display_name = req.body.display_name;
         let phone_number = req.body.phone_number;
         let password = req.body.password;
 
-        let result = await auth_services.user_register({ name_account, phone_number, password });
+        let result = await auth_services.user_register({ username, display_name, phone_number, password });
 
         // Created
         return res.status(201).send(result);
@@ -43,10 +44,10 @@ const user_login = async (req, res) => {
     if (result_valid.length > 0) return res.status(400).send(result_valid);
 
     try {
-        const name_account = req.body.name_account;
+        const username = req.body.username;
         const password = req.body.password;
 
-        const user_data = await auth_services.user_login(name_account, password);
+        const user_data = await auth_services.user_login(username, password);
 
         // Regenerate session to prevent session fixation attacks
         return req.session.regenerate((err) => {
@@ -57,9 +58,9 @@ const user_login = async (req, res) => {
             const token = jwt.sign({ _id: user_data._id }, JWT_SECRET, { expiresIn: '2h' });
 
             const data_return = {
-                username: user_data.username,
+                display_name: user_data.display_name,
                 id_account: user_data.id_account,
-                name_account: user_data.name_account,
+                username: user_data.username,
                 phone_number: user_data.phone_number,
                 balance: user_data.balance || 0,
                 token,
@@ -85,17 +86,17 @@ const user_update_profile = async (req, res) => {
     if (!current_user_id) return res.status(401).send('Unauthorized');
 
     try {
-        const { username, name_account, phone_number } = req.body;
+        const { display_name, username, phone_number } = req.body;
 
-        if (!username && !name_account && !phone_number) {
+        if (!display_name && !username && !phone_number) {
             return res.status(400).send('No fields to update');
         }
 
-        // check uniqueness for name_account and phone_number
-        if (name_account) {
-            const ok = await auth_services.check_name_available(name_account, current_user_id);
+        // check uniqueness for username and phone_number
+        if (username) {
+            const ok = await auth_services.check_username_available(username, current_user_id);
             if (!ok) {
-                return res.status(400).send(message_to_client('body', auth_message.name_account_existed, 'name_account'));
+                return res.status(400).send(message_to_client('body', auth_message.username_existed, 'username'));
             }
         }
 
@@ -110,17 +111,17 @@ const user_update_profile = async (req, res) => {
         const user = await user_models.find_user_by_id(current_user_id);
         if (!user) return res.status(404).send('User not found');
 
+        if (display_name) user.display_name = display_name;
         if (username) user.username = username;
-        if (name_account) user.name_account = name_account;
         if (phone_number) user.phone_number = phone_number;
         user.update_time = Date.now();
 
         await user.save();
 
         const data_return = {
-            username: user.username,
+            display_name: user.display_name,
             id_account: user.id_account,
-            name_account: user.name_account,
+            username: user.username,
             phone_number: user.phone_number,
         };
 

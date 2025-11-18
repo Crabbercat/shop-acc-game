@@ -130,13 +130,14 @@ export default {
       };
 
       const formattedId = formatId(ud.id_account);
-      const rawName = (ud.username || ud.name_account || "").toString().trim();
+      const rawDisplay = (ud.display_name || "").toString().trim();
+      const fallbackUsername = (ud.username || "").toString().trim();
 
-      let label = rawName;
+      let label = rawDisplay || fallbackUsername;
       if (!label) {
-        label = formattedId ? `Người dùng [${formattedId}]` : "TÀI KHOẢN";
+        label = formattedId ? `Người dùng - ${formattedId}` : "TÀI KHOẢN";
       } else if (label === "Người dùng" && formattedId) {
-        label = `Người dùng [${formattedId}]`;
+        label = `Người dùng - ${formattedId}`;
       }
 
       const MAX_LENGTH = 22;

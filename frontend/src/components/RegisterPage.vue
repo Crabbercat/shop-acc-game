@@ -6,12 +6,12 @@
       <div class="form">
         <p><strong>Tên tài khoản</strong></p>
         <input
-          v-model="name_account"
+          v-model="username"
           type="text"
           placeholder="Nhập tên tài khoản"
         />
-        <p v-if="error.name_account" class="error-message">
-          <strong>{{ error.name_account }}</strong>
+        <p v-if="error.username" class="error-message">
+          <strong>{{ error.username }}</strong>
         </p>
         <p><strong>Số điện thoại</strong></p>
         <input
@@ -57,13 +57,13 @@ import Vue from "vue";
 export default {
   data() {
     return {
-      name_account: null,
+      username: null,
       phone_number: null,
       password: null,
       re_password: null,
 
       error: {
-        name_account: null,
+        username: null,
         phone_number: null,
         password: null,
         re_password: null,
@@ -77,13 +77,14 @@ export default {
 
     let _this = this;
     setTimeout(() => {
-      if (_this.$store.state.user_data.username) _this.$router.push("/");
+      if (_this.$store.state.user_data && _this.$store.state.user_data.id_account)
+        _this.$router.push("/");
     }, 0);
   },
 
   methods: {
     send_register_req() {
-      let name_account = this.name_account;
+      let username = this.username;
       let phone_number = this.phone_number;
       let password = this.password;
       let re_password = this.re_password;
@@ -92,8 +93,8 @@ export default {
       this.remove_error();
 
       // Validate required fields
-      if (!name_account || !phone_number || !password || !re_password) {
-        if (!name_account) this.set_error("name_account", "Vui lòng nhập tên tài khoản");
+      if (!username || !phone_number || !password || !re_password) {
+        if (!username) this.set_error("username", "Vui lòng nhập tên tài khoản");
         if (!phone_number) this.set_error("phone_number", "Vui lòng nhập số điện thoại");
         if (!password) this.set_error("password", "Vui lòng nhập mật khẩu");
         if (!re_password) this.set_error("re_password", "Vui lòng nhập lại mật khẩu");
@@ -109,7 +110,7 @@ export default {
 
       Vue.axios
         .post(`${baseUrl}/user-register`, {
-          name_account: name_account,
+          username: username,
           phone_number: phone_number,
           password: password,
         })
@@ -131,8 +132,8 @@ export default {
             } else if (typeof data === "string") {
               // backend may return a simple string for duplicate error
               // try to map known messages to fields
-              if (data.includes("tên tài khoản") || data.toLowerCase().includes("tên tài khoản")) {
-                _this.set_error("name_account", data);
+              if (data.includes("tên tài khoản") || data.toLowerCase().includes("tên tài khoản") || data.toLowerCase().includes("đăng nhập")) {
+                _this.set_error("username", data);
               } else if (data.toLowerCase().includes("số điện thoại") || data.toLowerCase().includes("điện thoại")) {
                 _this.set_error("phone_number", data);
               } else {
