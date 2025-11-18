@@ -90,7 +90,11 @@ export default {
       username: "",
       phone_number: "",
     },
-    errors: {},
+    errors: {
+      display_name: "",
+      username: "",
+      phone_number: "",
+    },
     loading: false,
     successMessage: "",
     successTimeout: null,
@@ -122,28 +126,38 @@ export default {
   },
 
   methods: {
+    resetErrors() {
+      this.errors.display_name = "";
+      this.errors.username = "";
+      this.errors.phone_number = "";
+    },
+    setFieldError(field, message) {
+      if (Object.prototype.hasOwnProperty.call(this.errors, field)) {
+        this.errors[field] = message;
+      }
+    },
     startEdit(field) {
       this.editingField = field;
-      this.errors = {};
+      this.resetErrors();
       this.clearSuccessMessage();
       this.editValues[field] = this.user[field] || "";
     },
 
     cancelEdit() {
       this.editingField = null;
-      this.errors = {};
+      this.resetErrors();
       this.clearSuccessMessage();
     },
 
     async saveEdit(field) {
-      this.errors = {};
+      this.resetErrors();
       this.clearSuccessMessage();
       const payload = {};
       payload[field] = this.editValues[field];
 
       // Basic client-side presence check
       if (!payload[field] || payload[field].toString().trim() === "") {
-        this.errors[field] = "Không được để trống";
+        this.setFieldError(field, "Không được để trống");
         return;
       }
 
@@ -163,17 +177,21 @@ export default {
         this.clearSuccessMessage();
         if (err && err.response && err.response.data) {
           const d = err.response.data;
-          if (Array.isArray(d) && d.length > 0 && d[0].param) {
-            this.errors[d[0].param] = d[0].msg || "Lỗi";
+          if (Array.isArray(d) && d.length > 0) {
+            d.forEach((item) => {
+              if (item && item.param) {
+                this.setFieldError(item.param, item.msg || "Lỗi");
+              }
+            });
           } else if (typeof d === "string") {
-            this.errors[field] = d;
+            this.setFieldError(field, d);
           } else if (d && d[0] && d[0].msg) {
-            this.errors[field] = d[0].msg;
+            this.setFieldError(field, d[0].msg);
           } else {
-            this.errors[field] = "Lỗi server";
+            this.setFieldError(field, "Lỗi server");
           }
         } else {
-          this.errors[field] = "Lỗi kết nối";
+          this.setFieldError(field, "Lỗi kết nối");
         }
       } finally {
         this.loading = false;

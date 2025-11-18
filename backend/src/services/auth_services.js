@@ -60,9 +60,15 @@ const check_phone_available = async (phone_number, current_user_id) => {
   return false;
 };
 
+const verify_user_password = async (user, password) => {
+  if (!user || !user.password) return false;
+  return bcrypt.compare(password, user.password);
+};
+
 module.exports = {
   user_register,
   user_login,
   check_username_available,
-  check_phone_available
+  check_phone_available,
+  verify_user_password
 }

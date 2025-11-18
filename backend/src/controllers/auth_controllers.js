@@ -3,8 +3,10 @@ const user_models = require('../models/user_models');
 const { auth_message } = require("../../lang/vi");
 const { message_to_client } = require("../helper/message_helper");
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-key';
+const saltRounds = 4;
 
 const { validationResult } = require('express-validator');
 
@@ -85,10 +87,15 @@ const user_update_profile = async (req, res) => {
     const current_user_id = req.session && req.session.user_id;
     if (!current_user_id) return res.status(401).send('Unauthorized');
 
-    try {
-        const { display_name, username, phone_number } = req.body;
+    const validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+        return res.status(400).send(validationErrors.array());
+    }
 
-        if (!display_name && !username && !phone_number) {
+    try {
+        const { display_name, username, phone_number, password } = req.body;
+
+        if (!display_name && !username && !phone_number && !password) {
             return res.status(400).send('No fields to update');
         }
 
@@ -114,6 +121,10 @@ const user_update_profile = async (req, res) => {
         if (display_name) user.display_name = display_name;
         if (username) user.username = username;
         if (phone_number) user.phone_number = phone_number;
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
+            user.password = hashedPassword;
+        }
         user.update_time = Date.now();
 
         await user.save();
@@ -137,8 +148,56 @@ const user_update_profile = async (req, res) => {
     }
 }
 
+const user_change_password = async (req, res) => {
+    const current_user_id = req.session && req.session.user_id;
+    if (!current_user_id) return res.status(401).send('Unauthorized');
+
+    const validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty()) {
+        return res.status(400).send(validationErrors.array());
+    }
+
+    const { current_password, new_password } = req.body;
+
+    try {
+        const user = await user_models.find_user_by_id(current_user_id);
+        if (!user) return res.status(404).send('User not found');
+
+        const isMatch = await auth_services.verify_user_password(user, current_password);
+        if (!isMatch) {
+            return res.status(400).send(message_to_client('body', auth_message.current_password_invalid, 'current_password'));
+        }
+
+        const hashedPassword = await bcrypt.hash(new_password, saltRounds);
+        user.password = hashedPassword;
+        user.update_time = Date.now();
+        await user.save();
+
+        if (req.session) {
+            req.session.user_id = null;
+        }
+
+        await new Promise((resolve, reject) => {
+            req.session.destroy((err) => {
+                if (err) return reject(err);
+                resolve();
+            });
+        }).catch(() => { });
+
+        return res.status(200).send({
+            message: auth_message.update_password_success,
+            requireReLogin: true,
+        });
+    } catch (err) {
+        if (Array.isArray(err)) return res.status(400).send(err);
+        if (typeof err === 'string') return res.status(400).send(err);
+        return res.status(500).send(err);
+    }
+}
+
 module.exports = {
     user_register,
     user_login,
-    user_update_profile
+    user_update_profile,
+    user_change_password
 }

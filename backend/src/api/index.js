@@ -20,7 +20,14 @@ function init_routes(app) {
 
   router.post(
     "/user-update",
+    auth_validation.update_profile,
     auth_controllers.user_update_profile
+  );
+
+  router.post(
+    "/user-change-password",
+    auth_validation.change_password,
+    auth_controllers.user_change_password
   );
 
   router.get(
