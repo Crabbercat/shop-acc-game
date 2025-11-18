@@ -46,7 +46,7 @@ const user_login = async (req, res) => {
     if (result_valid.length > 0) return res.status(400).send(result_valid);
 
     try {
-        const username = req.body.username;
+        const username = typeof req.body.username === 'string' ? req.body.username.trim() : req.body.username;
         const password = req.body.password;
 
         const user_data = await auth_services.user_login(username, password);

@@ -4,11 +4,11 @@
       <p class="title"><strong>Đăng nhập tài khoản</strong></p>
       <div class="border-b"></div>
       <div class="form">
-        <p><strong>Tên tài khoản</strong></p>
+        <p><strong>Tên tài khoản hoặc số điện thoại</strong></p>
         <input
           v-model="username"
           type="text"
-          placeholder="Nhập tên tài khoản"
+          placeholder="Nhập tên tài khoản hoặc số điện thoại"
         />
         <p><strong>Mật khẩu</strong></p>
         <div class="input-wrapper">
@@ -77,29 +77,31 @@ export default {
   methods: {
     user_login() {
       let _this = this;
-      // username must be alphanumeric between 5 and 50 chars
+      const identifier = (this.username || "").trim();
+      this.username = identifier;
+      // allow login by username or phone number
       let re = /^[a-zA-Z0-9]+$/i;
 
       this.remove_error();
 
-      if (!this.username || !this.password) {
-        this.error = "Vui lòng nhập tên tài khoản và mật khẩu";
+      if (!identifier || !this.password) {
+        this.error = "Vui lòng nhập tên tài khoản hoặc số điện thoại và mật khẩu";
         return false;
       }
 
       // Keep username checks, but allow passwords to contain special characters
       // and require at least 8 characters (same as registration policy)
-        if (this.username.length < 5 || this.username.length > 50 || !re.test(this.username) || this.password.length < 8 || this.password.length > 50) {
-          const msg = (this.$t ? this.$t("login_invalid") : "Tên tài khoản hoặc mật khẩu không hợp lệ");
-          this.error = msg;
-          return false;
-        }
+      if (identifier.length < 5 || identifier.length > 50 || !re.test(identifier) || this.password.length < 8 || this.password.length > 50) {
+        const msg = (this.$t ? this.$t("login_invalid") : "Tên tài khoản hoặc số điện thoại hoặc mật khẩu không hợp lệ");
+        this.error = msg;
+        return false;
+      }
 
       const baseUrl = process.env.VUE_APP_URL || '';
 
       Vue.axios
         .post(`${baseUrl}/user-login`, {
-          username: this.username,
+          username: identifier,
           password: this.password,
         })
         .then((res) => {
@@ -179,6 +181,8 @@ export default {
       font-size: 1.6rem;
       text-transform: uppercase;
       margin: 5px 60px;
+      white-space: nowrap;
+      text-align: center;
     }
     .form {
       width: 100%;

@@ -33,8 +33,19 @@ const user_register = async (user_data) => {
   }
 };
 
-const user_login = async (username, password) => {
-  const user_data = await user_models.find_by_username(username);
+const user_login = async (identifier, password) => {
+  if (!identifier) {
+    throw auth_message.login_invalid;
+  }
+
+  const trimmedIdentifier = identifier.trim();
+
+  let user_data = await user_models.find_by_username(trimmedIdentifier);
+
+  if (!user_data) {
+    user_data = await user_models.find_by_phone_number(trimmedIdentifier);
+  }
+
   if (!user_data) throw auth_message.login_invalid;
 
   const match = await bcrypt.compare(password, user_data.password);

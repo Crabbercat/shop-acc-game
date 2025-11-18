@@ -6,7 +6,7 @@ module.exports.auth_message = {
     password_type: "Mật khẩu không được chứa ký tự đặc biệt",
     password_policy: "Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ số và 1 ký tự đặc biệt",
     phone_number_invalid: "Số điện thoại không hợp lệ!",
-    username_existed: "Tên đăng nhập đã tồn tại, vui lòng sử dụng tên khác!",
+    username_existed: "Tên tài khoản đã tồn tại, vui lòng sử dụng tên khác!",
     current_password_required: "Vui lòng nhập mật khẩu hiện tại",
     confirm_password_required: "Vui lòng xác nhận mật khẩu mới",
     confirm_password_mismatch: "Mật khẩu xác nhận không khớp",
@@ -17,5 +17,5 @@ module.exports.auth_message = {
     update_password_success: "Đổi mật khẩu thành công. Vui lòng đăng nhập lại!",
     current_password_invalid: "Mật khẩu hiện tại không đúng",
 
-    login_invalid: "Tài khoản hoặc mật khẩu không đúng xin vui lòng kiểm tra lại."
+    login_invalid: "Tên tài khoản hoặc số điện thoại hay mật khẩu không đúng, vui lòng kiểm tra lại."
 }
