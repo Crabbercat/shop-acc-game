@@ -11,20 +11,34 @@
     "code": "616014697910534",
     "serial": "10011256629793",
     "amount": 20000,
+    "status": "used"
+  },
+  {
+    "telco": "MOBIFONE",
+    "code": "213739929645632",
+    "serial": "10010977445814",
+    "amount": 200000,
     "status": "available"
   },
   {
-    "telco": "VIETTEL",
-    "code": "213739929645632",
-    "serial": "10010977445814",
-    "amount": 20000,
+    "telco": "MOBIFONE",
+    "code": "373739929645632",
+    "serial": "10010977443737",
+    "amount": 100000,
     "status": "available"
   },
   {
     "telco": "VINAPHONE",
-    "code": "1234567890123",
-    "serial": "1234567890123",
+    "code": "897452661204889",
+    "serial": "10010988744192",
     "amount": 100000,
+    "status": "available"
+  },
+  {
+    "telco": "VINAPHONE",
+    "code": "564002918734551",
+    "serial": "10010999352741",
+    "amount": 500000,
     "status": "available"
   },
   {
