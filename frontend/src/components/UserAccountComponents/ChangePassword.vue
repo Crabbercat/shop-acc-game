@@ -2,36 +2,69 @@
   <div class="change-password">
     <div class="title"><strong>đổi mật khẩu</strong></div>
     <form class="form" @submit.prevent="handleSubmit">
-      <label>
-        <span>Mật khẩu hiện tại</span>
-        <input
-          v-model="form.current_password"
-          type="password"
-          autocomplete="current-password"
-          :disabled="isSubmitting"
-        />
-      </label>
+          <label>
+            <span>Mật khẩu hiện tại</span>
+            <div class="input-wrapper">
+              <input
+                v-model="form.current_password"
+                :type="visibility.current ? 'text' : 'password'"
+                autocomplete="current-password"
+                :disabled="isSubmitting"
+              />
+              <button
+                type="button"
+                class="toggle-visibility"
+                @click="toggleVisibility('current')"
+                :aria-label="visibility.current ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'"
+              >
+                <i :class="visibility.current ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+              </button>
+            </div>
+          </label>
       <div v-if="errors.current_password" class="error">{{ errors.current_password }}</div>
 
       <label>
         <span>Mật khẩu mới</span>
-        <input
-          v-model="form.new_password"
-          type="password"
-          autocomplete="new-password"
-          :disabled="isSubmitting"
-        />
+        <div class="input-wrapper">
+          <input
+            v-model="form.new_password"
+            :type="visibility.new ? 'text' : 'password'"
+            autocomplete="new-password"
+            :disabled="isSubmitting"
+          />
+          <button
+            type="button"
+            class="toggle-visibility"
+            @click="toggleVisibility('new')"
+            :aria-label="visibility.new ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'"
+          >
+            <i :class="visibility.new ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+          </button>
+        </div>
       </label>
       <div v-if="errors.new_password" class="error">{{ errors.new_password }}</div>
 
       <label>
         <span>Xác nhận mật khẩu mới</span>
-        <input
-          v-model="form.confirm_password"
-          type="password"
-          autocomplete="new-password"
-          :disabled="isSubmitting"
-        />
+        <div class="input-wrapper">
+          <input
+            v-model="form.confirm_password"
+            :type="visibility.confirm ? 'text' : 'password'"
+            autocomplete="new-password"
+            @paste.prevent
+            @keydown.ctrl.v.prevent
+            @keydown.meta.v.prevent
+            :disabled="isSubmitting"
+          />
+          <button
+            type="button"
+            class="toggle-visibility"
+            @click="toggleVisibility('confirm')"
+            :aria-label="visibility.confirm ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'"
+          >
+            <i :class="visibility.confirm ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+          </button>
+        </div>
       </label>
       <div v-if="errors.confirm_password" class="error">{{ errors.confirm_password }}</div>
 
@@ -67,6 +100,11 @@ export default {
       successMessage: "",
       isSubmitting: false,
       redirectTimer: null,
+      visibility: {
+        current: false,
+        new: false,
+        confirm: false,
+      },
     };
   },
   methods: {
@@ -152,6 +190,11 @@ export default {
         this.isSubmitting = false;
       }
     },
+    toggleVisibility(field) {
+      if (Object.prototype.hasOwnProperty.call(this.visibility, field)) {
+        this.visibility[field] = !this.visibility[field];
+      }
+    },
   },
   beforeDestroy() {
     if (this.redirectTimer) {
@@ -183,14 +226,46 @@ export default {
       }
     }
 
-    input {
-      outline: none;
-      border: 1px solid var(--grey-text);
-      padding: 10px;
-      border-radius: 5px;
-      font-size: 0.95rem;
-      color: var(--black-two);
-      background-color: #fff;
+    .input-wrapper {
+      position: relative;
+
+      input {
+        outline: none;
+        border: 1px solid var(--grey-text);
+        padding: 10px 44px 10px 10px;
+        border-radius: 5px;
+        font-size: 0.95rem;
+        color: var(--black-two);
+        background-color: #fff;
+        width: 100%;
+      }
+
+      .toggle-visibility {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: var(--grey-text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        padding: 0;
+
+        &:hover,
+        &:focus {
+          color: var(--black-two);
+        }
+
+        &:disabled {
+          cursor: not-allowed;
+        }
+      }
     }
 
     button {

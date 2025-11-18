@@ -11,7 +11,22 @@
           placeholder="Nhập tên tài khoản"
         />
         <p><strong>Mật khẩu</strong></p>
-        <input v-model="password" type="password" placeholder="Nhập mật khẩu" />
+        <div class="input-wrapper">
+          <input
+            v-model="password"
+            :type="passwordVisible ? 'text' : 'password'"
+            placeholder="Nhập mật khẩu"
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            class="toggle-visibility"
+            @click="togglePasswordVisibility"
+            :aria-label="passwordVisible ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'"
+          >
+            <i :class="passwordVisible ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+          </button>
+        </div>
         <p v-if="error" class="error-message">
           <strong>{{ error }}</strong>
         </p>
@@ -37,6 +52,7 @@ export default {
       username: null,
       password: null,
       error: null,
+      passwordVisible: false,
     };
   },
 
@@ -124,6 +140,10 @@ export default {
     remove_error() {
       this.error = null;
     },
+
+    togglePasswordVisibility() {
+      this.passwordVisible = !this.passwordVisible;
+    },
   },
 };
 </script>
@@ -171,6 +191,38 @@ export default {
         border: 1px solid var(--black-one);
         background-color: white !important;
       }
+
+      .input-wrapper {
+        position: relative;
+
+        input {
+          padding-right: 44px;
+        }
+
+        .toggle-visibility {
+          position: absolute;
+          top: 50%;
+          right: 10px;
+          transform: translateY(-50%);
+          width: 28px;
+          height: 28px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          color: var(--grey-text);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1rem;
+          padding: 0;
+
+          &:hover,
+          &:focus {
+            color: var(--black-two);
+          }
+        }
+      }
+
       p {
         font-size: 0.9rem;
         margin-bottom: 5px;

@@ -23,16 +23,45 @@
           <strong>{{ error.phone_number }}</strong>
         </p>
         <p><strong>Mật khẩu</strong></p>
-        <input v-model="password" type="password" placeholder="Nhập mật khẩu" />
+        <div class="input-wrapper">
+          <input
+            v-model="password"
+            :type="passwordVisibility.password ? 'text' : 'password'"
+            placeholder="Nhập mật khẩu"
+            autocomplete="new-password"
+          />
+          <button
+            type="button"
+            class="toggle-visibility"
+            @click="togglePasswordVisibility('password')"
+            :aria-label="passwordVisibility.password ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'"
+          >
+            <i :class="passwordVisibility.password ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+          </button>
+        </div>
         <p v-if="error.password" class="error-message">
           <strong>{{ error.password }}</strong>
         </p>
         <p><strong>Nhập lại mật khẩu</strong></p>
-        <input
-          v-model="re_password"
-          type="password"
-          placeholder="Nhập lại mật khẩu"
-        />
+        <div class="input-wrapper">
+          <input
+            v-model="re_password"
+            :type="passwordVisibility.confirm ? 'text' : 'password'"
+            placeholder="Nhập lại mật khẩu"
+            autocomplete="new-password"
+            @paste.prevent
+            @keydown.ctrl.v.prevent
+            @keydown.meta.v.prevent
+          />
+          <button
+            type="button"
+            class="toggle-visibility"
+            @click="togglePasswordVisibility('confirm')"
+            :aria-label="passwordVisibility.confirm ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'"
+          >
+            <i :class="passwordVisibility.confirm ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+          </button>
+        </div>
         <p v-if="error.re_password" class="error-message">
           <strong>{{ error.re_password }}</strong>
         </p>
@@ -67,6 +96,10 @@ export default {
         phone_number: null,
         password: null,
         re_password: null,
+      },
+      passwordVisibility: {
+        password: false,
+        confirm: false,
       },
     };
   },
@@ -159,8 +192,123 @@ export default {
         this.error[field] = null;
       });
     },
+
+    togglePasswordVisibility(field) {
+      if (Object.prototype.hasOwnProperty.call(this.passwordVisibility, field)) {
+        this.passwordVisibility[field] = !this.passwordVisibility[field];
+      }
+    },
   },
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.register-page {
+  width: 100%;
+  height: calc(100% - 74px);
+  background-color: white;
+  margin-top: 74px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .wrap-login-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid var(--black-one);
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+    max-width: 420px;
+
+    .border-b {
+      width: 150px;
+      height: 1px;
+      background-color: var(--black-three);
+    }
+
+    .title {
+      font-size: 1.6rem;
+      text-transform: uppercase;
+      margin: 5px 60px;
+    }
+
+    .form {
+      width: 100%;
+
+      input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        outline: none;
+        border: 1px solid var(--black-one);
+        background-color: white !important;
+      }
+
+      .input-wrapper {
+        position: relative;
+
+        input {
+          padding-right: 44px;
+        }
+
+        .toggle-visibility {
+          position: absolute;
+          top: 50%;
+          right: 10px;
+          transform: translateY(-50%);
+          width: 28px;
+          height: 28px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          color: var(--grey-text);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1rem;
+          padding: 0;
+
+          &:hover,
+          &:focus {
+            color: var(--black-two);
+          }
+        }
+      }
+
+      p {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+      }
+    }
+
+    .btn-login,
+    .btn-create-new {
+      width: 100%;
+      padding: 10px 0;
+      text-align: center;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      font-size: 1.1rem;
+    }
+
+    .btn-login {
+      background-color: var(--red-btn);
+      margin: 25px 0px 10px 0px;
+    }
+
+    .btn-create-new {
+      border: 1px solid var(--black-one);
+      color: var(--black-two);
+    }
+
+    .error-message {
+      color: red;
+      font-size: 0.85rem !important;
+    }
+  }
+}
+</style>
