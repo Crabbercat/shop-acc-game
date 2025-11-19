@@ -4,14 +4,14 @@
     "code": "415872203567012",
     "serial": "10011167502200",
     "amount": 50000,
-    "status": "used"
+    "status": "available"
   },
   {
     "telco": "VIETTEL",
     "code": "616014697910534",
     "serial": "10011256629793",
     "amount": 20000,
-    "status": "used"
+    "status": "available"
   },
   {
     "telco": "MOBIFONE",
@@ -46,14 +46,14 @@
     "code": "1",
     "serial": "1",
     "amount": 100000,
-    "status": "used"
+    "status": "available"
   },
   {
     "telco": "MOBIFONE",
     "code": "2",
     "serial": "2",
     "amount": 500000,
-    "status": "used"
+    "status": "available"
   },
   {
     "telco": "VINAPHONE",
